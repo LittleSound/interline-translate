@@ -16,6 +16,14 @@
       {
         "command": "helloworldvscode.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "helloworldvscode.whatTimeIsItNow",
+        "title": "What time is it now?"
+      },
+      {
+        "command": "helloworldvscode.putAHelloWorld",
+        "title": "Put a \"Hello World\""
       }
     ]
   },
