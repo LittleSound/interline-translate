@@ -2,6 +2,9 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { displayOnGapLines } from './view';
+import { config } from './config';
+import { ofetch } from 'ofetch';
+import { translate } from './providers/tranlations/google';
 
 
 // This method is called when your extension is activated
@@ -15,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('helloworldvscode.helloWorld', () => {
+	let disposable = vscode.commands.registerCommand('helloworldvscode.helloWorld', async () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from HelloWorldVSCode!');
@@ -26,25 +29,29 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('It is ' + new Date().toLocaleTimeString());
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('helloworldvscode.putAHelloWorld', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('helloworldvscode.translateSelectedText', async () => {
 		const activeEditor = vscode.window.activeTextEditor;
 		if (!activeEditor) {
 			return;
 		}
 
-		console.log('cursorPosition.line', activeEditor.selection.active.line);
+		const res = await translate({
+			text: activeEditor.document.getText(activeEditor.selection),
+			from: 'en',
+			to: 'zh_cn',
+		});
+
+		if (!res.ok) {
+			vscode.window.showErrorMessage(res.message);
+			return;
+		}
 
 		displayOnGapLines(activeEditor, [
 			{
 				range: activeEditor.selection,
-				text: '我是翻译1',
+				text: res.text,
 				character: activeEditor.selection.isSingleLine ? activeEditor.selection.start.character : 0,
 			},
-			{
-				range: activeEditor.document.lineAt(activeEditor.selection.end.line + 1).range,
-				text: '我是翻译2',
-				character: activeEditor.selection.isSingleLine ? activeEditor.selection.start.character : 0,
-			}
 		]);
 	}));
 }
