@@ -35,7 +35,6 @@ export function displayOnGapLines(editor: TextEditor, options: DisplayOnGapLines
 	});
 }
 
-
 export class HelloWorldCodeLensProvider implements CodeLensProvider {
 	putRangeList: Range[] = [];
 

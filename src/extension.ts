@@ -35,8 +35,15 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
+		let range: vscode.Range = activeEditor.selection;
+
+		// If the user has not selected any text, use the word where the cursor is located.
+		if (range.start.isEqual(range.end)) {
+			range = activeEditor.document.getWordRangeAtPosition(range.start) || range;
+		}
+
 		const res = await translate({
-			text: activeEditor.document.getText(activeEditor.selection),
+			text: activeEditor.document.getText(range),
 			from: 'en',
 			to: 'zh_cn',
 		});
@@ -48,9 +55,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 		displayOnGapLines(activeEditor, [
 			{
-				range: activeEditor.selection,
+				range: range,
 				text: res.text,
-				character: activeEditor.selection.isSingleLine ? activeEditor.selection.start.character : 0,
+				character: range.isSingleLine ? range.start.character : 0,
 			},
 		]);
 	}));
