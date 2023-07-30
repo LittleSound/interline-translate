@@ -48,4 +48,5 @@ export const config = reactive({
   /** you can use https://cors-anywhere.herokuapp.com/ at "vscode for web" */
   corsProxy: createConfigRef(`${EXT_NAMESPACE}.corsProxy`, ''),
 
+  textSize: 0.9,
 })

@@ -3,11 +3,12 @@
 import * as vscode from 'vscode'
 import { displayOnGapLines } from './view'
 import { translate } from './providers/tranlations/google'
-import { config, onConfigUpdated } from './config'
+import { config } from './config'
+import { RegisterTranslator } from './translator'
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(ctx: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "sidecar-translate" is now active!')
@@ -20,13 +21,13 @@ export function activate(context: vscode.ExtensionContext) {
     // Display a message box to the user
     vscode.window.showInformationMessage('Hello World from sidecar-translate!')
   })
-  context.subscriptions.push(disposable)
+  ctx.subscriptions.push(disposable)
 
-  context.subscriptions.push(vscode.commands.registerCommand('sidecar-translate.whatTimeIsItNow', () => {
+  ctx.subscriptions.push(vscode.commands.registerCommand('sidecar-translate.whatTimeIsItNow', () => {
     vscode.window.showInformationMessage(`It is ${new Date().toLocaleTimeString()}`)
   }))
 
-  context.subscriptions.push(vscode.commands.registerCommand('sidecar-translate.translateSelectedText', async () => {
+  ctx.subscriptions.push(vscode.commands.registerCommand('sidecar-translate.translateSelectedText', async () => {
     const activeEditor = vscode.window.activeTextEditor
     if (!activeEditor)
       return
@@ -57,9 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
     ])
   }))
 
-  vscode.workspace.onDidChangeConfiguration(() => {
-    onConfigUpdated()
-  })
+  RegisterTranslator(ctx)
 }
 
 // This method is called when your extension is deactivated
