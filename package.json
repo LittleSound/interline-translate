@@ -1,6 +1,6 @@
 {
-  "name": "helloworldvscode",
-  "displayName": "HelloWorldVSCode",
+  "name": "sidecar-translate",
+  "displayName": "Sidecar Translate",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -15,15 +15,15 @@
   "contributes": {
     "commands": [
       {
-        "command": "helloworldvscode.helloWorld",
+        "command": "sidecar-translate.helloWorld",
         "title": "Hello World"
       },
       {
-        "command": "helloworldvscode.whatTimeIsItNow",
+        "command": "sidecar-translate.whatTimeIsItNow",
         "title": "What time is it now?"
       },
       {
-        "command": "helloworldvscode.translateSelectedText",
+        "command": "sidecar-translate.translateSelectedText",
         "title": "Translate Selected Text"
       }
     ]
