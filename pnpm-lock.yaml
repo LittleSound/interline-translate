@@ -23,6 +23,9 @@ devDependencies:
   '@vscode/test-electron':
     specifier: ^2.3.2
     version: 2.3.2
+  '@vue/reactivity':
+    specifier: ^3.3.4
+    version: 3.3.4
   axios:
     specifier: ^1.4.0
     version: 1.4.0
@@ -699,6 +702,16 @@ packages:
       semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@vue/reactivity@3.3.4:
+    resolution: {integrity: sha512-kLTDLwd0B1jG08NBF3R5rqULtv/f8x3rOFByTDz4J53ttIQEDmALqKqXY0J+XQeN0aV2FBxY8nJDf88yvOPAqQ==}
+    dependencies:
+      '@vue/shared': 3.3.4
+    dev: true
+
+  /@vue/shared@3.3.4:
+    resolution: {integrity: sha512-7OjdcV8vQ74eiz1TZLzZP4JwqM5fA94K6yntPS5Z25r9HDuGNzaGdgvwKYq6S+MxwF0TFRwe50fIR/MYnakdkQ==}
     dev: true
 
   /acorn-jsx@5.3.2(acorn@8.10.0):

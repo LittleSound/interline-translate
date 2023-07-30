@@ -3,6 +3,7 @@
 import * as vscode from 'vscode'
 import { displayOnGapLines } from './view'
 import { translate } from './providers/tranlations/google'
+import { config, onConfigUpdated } from './config'
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -39,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
     const res = await translate({
       text: activeEditor.document.getText(range),
       from: 'en',
-      to: 'zh_cn',
+      to: config.defaultTargetLanguage as any,
     })
 
     if (!res.ok) {
@@ -55,6 +56,10 @@ export function activate(context: vscode.ExtensionContext) {
       },
     ])
   }))
+
+  vscode.workspace.onDidChangeConfiguration(() => {
+    onConfigUpdated()
+  })
 }
 
 // This method is called when your extension is deactivated

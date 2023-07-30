@@ -6,26 +6,26 @@ export const info = {
   name: 'google',
   // https://cloud.google.com/translate/docs/languages?hl=zh-cn
   supportLanguage: {
-    auto: 'auto',
-    zh_cn: 'zh-CN',
-    zh_tw: 'zh-TW',
-    ja: 'ja',
-    en: 'en',
-    ko: 'ko',
-    fr: 'fr',
-    es: 'es',
-    ru: 'ru',
-    de: 'de',
-    it: 'it',
-    tr: 'tr',
-    pt: 'pt',
-    pt_br: 'pt',
-    vi: 'vi',
-    id: 'id',
-    th: 'th',
-    ms: 'ms',
-    ar: 'ar',
-    hi: 'hi',
+    'auto': 'auto',
+    'zh-CN': 'zh-CN',
+    'zh-TW': 'zh-TW',
+    'ja': 'ja',
+    'en': 'en',
+    'ko': 'ko',
+    'fr': 'fr',
+    'es': 'es',
+    'ru': 'ru',
+    'de': 'de',
+    'it': 'it',
+    'tr': 'tr',
+    'pt': 'pt',
+    'pt-BR': 'pt',
+    'vi': 'vi',
+    'id': 'id',
+    'th': 'th',
+    'ms': 'ms',
+    'ar': 'ar',
+    'hi': 'hi',
   },
   needs: [
     {
@@ -62,7 +62,7 @@ export async function translate(options: GoogleTranslationParameters): Promise<T
     }
   }
 
-  let domain = config.googleProxy ?? 'translate.google.com'
+  let domain = config.googleTranslateProxy ?? 'translate.google.com'
   if (domain === '')
     domain = 'translate.google.com'
 

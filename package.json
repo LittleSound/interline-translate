@@ -12,22 +12,6 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "browser": "./out/web-extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "sidecar-translate.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "sidecar-translate.whatTimeIsItNow",
-        "title": "What time is it now?"
-      },
-      {
-        "command": "sidecar-translate.translateSelectedText",
-        "title": "Translate Selected Text"
-      }
-    ]
-  },
   "scripts": {
     "vscode:prepublish": "pnpm run build",
     "build": "node scripts/build",
@@ -45,6 +29,7 @@
     "@types/node": "20.2.5",
     "@types/vscode": "^1.80.0",
     "@vscode/test-electron": "^2.3.2",
+    "@vue/reactivity": "^3.3.4",
     "axios": "^1.4.0",
     "esbuild": "^0.18.16",
     "eslint": "^8.41.0",
@@ -52,5 +37,47 @@
     "mocha": "^10.2.0",
     "ofetch": "^1.1.1",
     "typescript": "^5.1.3"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "sidecar-translate.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "sidecar-translate.whatTimeIsItNow",
+        "title": "What time is it now?"
+      },
+      {
+        "command": "sidecar-translate.translateSelectedText",
+        "title": "Translate Selected Text"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Sidecar Translate",
+      "properties": {
+        "sidecar-translate.defaultTargetLanguage": {
+          "type": "string",
+          "default": "zh-CN",
+          "description": "Default target language to translate to."
+        },
+        "sidecar-translate.secondLanguage": {
+          "type": "string",
+          "default": "",
+          "description": "Fallback language when the default language is not available."
+        },
+        "sidecar-translate.googleTranslateProxy": {
+          "type": "string",
+          "default": "",
+          "description": "Google translate proxy to use for requests. Leave empty to use the official API Url."
+        },
+        "sidecar-translate.corsProxy": {
+          "type": "string",
+          "default": "",
+          "description": "CORS proxy to use for requests. Leave empty to use the default proxy."
+        }
+      }
+    }
   }
 }
