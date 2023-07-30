@@ -35,15 +35,15 @@
     "watch": "pnpm run build -watch",
     "pretest": "pnpm run build && pnpm run lint",
     "serve": "serve -C",
+    "lint": "eslint .",
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.39.8",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "20.2.5",
     "@types/vscode": "^1.80.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.8",
-    "@typescript-eslint/parser": "^5.59.8",
     "@vscode/test-electron": "^2.3.2",
     "axios": "^1.4.0",
     "esbuild": "^0.18.16",

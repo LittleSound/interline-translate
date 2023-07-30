@@ -1,6 +1,6 @@
-import { ofetch, FetchError } from 'ofetch';
-import { config } from '../../config';
-import { TranslationParameters, TranslationResult } from './types';
+import { FetchError, ofetch } from 'ofetch'
+import { config } from '../../config'
+import type { TranslationParameters, TranslationResult } from './types'
 
 export const info = {
   name: 'google',
@@ -33,47 +33,46 @@ export const info = {
       place_hold: 'default: translate.google.com',
     },
   ],
-};
+}
 
-export type SupportLanguage = keyof typeof info.supportLanguage;
+export type SupportLanguage = keyof typeof info.supportLanguage
 
 export interface GoogleTranslationParameters extends TranslationParameters {
-  from: SupportLanguage;
-  to: SupportLanguage;
+  from: SupportLanguage
+  to: SupportLanguage
 }
 
 export async function translate(options: GoogleTranslationParameters): Promise<TranslationResult> {
-    const { text, from, to } = options;
-    const { supportLanguage } = info;
+  const { text, from, to } = options
+  const { supportLanguage } = info
 
-    if (text === '') {
-      return {
-        ok: false,
-        message: 'Empty Text',
-        originalError: null,
-      };
+  if (text === '') {
+    return {
+      ok: false,
+      message: 'Empty Text',
+      originalError: null,
     }
+  }
 
-    if (!(from in supportLanguage) || !(to in supportLanguage)) {
-      return {
-        ok: false,
-        message: 'Unsupported Language',
-        originalError: null,
-      };
+  if (!(from in supportLanguage) || !(to in supportLanguage)) {
+    return {
+      ok: false,
+      message: 'Unsupported Language',
+      originalError: null,
     }
+  }
 
-    let domain = config.googleProxy ?? 'translate.google.com';
-    if (domain === '') {
-      domain = 'translate.google.com';
-    }
+  let domain = config.googleProxy ?? 'translate.google.com'
+  if (domain === '')
+    domain = 'translate.google.com'
 
-    try {
-      let res = await ofetch(
+  try {
+    const res = await ofetch(
         `${config.corsProxy}https://${domain}/translate_a/single?dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t`,
         {
           method: 'GET',
           headers: {
-            'Origin': 'https://translate.google.com',
+            Origin: 'https://translate.google.com',
           },
           query: {
             client: 'gtx',
@@ -88,44 +87,44 @@ export async function translate(options: GoogleTranslationParameters): Promise<T
             kc: '7',
             q: text,
           },
-        }
-      );
+        },
+    )
 
-      let target = '';
-      if (res[2] === supportLanguage[to]) {
-        let secondLanguage = config.secondLanguage ?? 'en';
-        if (secondLanguage !== to) {
-          return translate({
-            ...options,
-            to: secondLanguage as SupportLanguage
-          });
-        }
-      }
-
-      for (let r of res[0]) {
-        if (r[0]) {
-            target = target + r[0];
-        }
-      }
-
-      return {
-        ok: true,
-        text: target.trim()
-      };
-    } catch(e) {
-      if (e instanceof FetchError) {
-        return {
-          ok: false,
-          message: `Http Request Error\nHttp Status: ${e.status}\n${JSON.stringify(e.data)}`,
-          originalError: e,
-        };
-      }
-      else {
-        return {
-          ok: false,
-          message: typeof e === 'object' ? (e as any)?.message : 'Unknown Error',
-          originalError: e,
-        };
+    let target = ''
+    if (res[2] === supportLanguage[to]) {
+      const secondLanguage = config.secondLanguage ?? 'en'
+      if (secondLanguage !== to) {
+        return translate({
+          ...options,
+          to: secondLanguage as SupportLanguage,
+        })
       }
     }
+
+    for (const r of res[0]) {
+      if (r[0])
+        target = target + r[0]
+    }
+
+    return {
+      ok: true,
+      text: target.trim(),
+    }
+  }
+  catch (e) {
+    if (e instanceof FetchError) {
+      return {
+        ok: false,
+        message: `Http Request Error\nHttp Status: ${e.status}\n${JSON.stringify(e.data)}`,
+        originalError: e,
+      }
+    }
+    else {
+      return {
+        ok: false,
+        message: typeof e === 'object' ? (e as any)?.message : 'Unknown Error',
+        originalError: e,
+      }
+    }
+  }
 }
