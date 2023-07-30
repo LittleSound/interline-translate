@@ -4,5 +4,6 @@ export const secondLanguage = ''
 export const config = {
   googleProxy: '',
   secondLanguage: '',
-  corsProxy: 'https://cors-anywhere.herokuapp.com/',
+  corsProxy: '',
+  // corsProxy: 'https://cors-anywhere.herokuapp.com/',
 }
