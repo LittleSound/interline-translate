@@ -52,9 +52,8 @@ export function RegisterTranslator(ctx: ExtensionContext) {
     const phrasesFromDoc = Array.from(new Set(text.match(regex) || []))
       .filter(phrase => !translationCache.has(phrase))
 
-    console.log('单词表：', phrasesFromDoc)
-
     if (!phrasesFromDoc.length) {
+      console.log('没有需要翻译的内容')
       updateDecorations()
       return
     }
@@ -65,8 +64,6 @@ export function RegisterTranslator(ctx: ExtensionContext) {
       to: config.defaultTargetLanguage as any,
     })
 
-    console.log('翻译结果', translationResult)
-
     if (!translationResult.ok) {
       window.showErrorMessage(translationResult.message)
       updateDecorations()
@@ -74,6 +71,8 @@ export function RegisterTranslator(ctx: ExtensionContext) {
     }
 
     const translatedPhrases = translationResult.text.split('\n')
+
+    console.log('翻译结果', phrasesFromDoc, translatedPhrases)
 
     phrasesFromDoc.forEach((phrase, index) => {
       const tp = translatedPhrases[index]
@@ -90,10 +89,11 @@ export function RegisterTranslator(ctx: ExtensionContext) {
 
     const text = editor.document.getText()
 
+    decorations = []
+
     let match: RegExpExecArray | null
     regex.lastIndex = 0
 
-    console.log('开始迭代')
     // eslint-disable-next-line no-cond-assign
     while ((match = regex.exec(text))) {
       const key = match[0]
@@ -106,8 +106,6 @@ export function RegisterTranslator(ctx: ExtensionContext) {
       const startPos = editor.document.positionAt(match.index)
       const endPos = editor.document.positionAt(match.index + key.length)
       const range = new Range(startPos, endPos)
-
-      console.log('key', key, range.start.line, range.start.character, range.end.line, range.end.character)
 
       decorations.push({
         key,
@@ -147,7 +145,7 @@ export function RegisterTranslator(ctx: ExtensionContext) {
     }
     timeout = setTimeout(() => {
       translateDocument()
-    }, immediately ? 200 : 2000)
+    }, immediately ? 0 : 200)
   }
 
   function updateEditor(_editor?: TextEditor) {
