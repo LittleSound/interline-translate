@@ -29,7 +29,6 @@ export class PlaceholderCodeLensProvider implements CodeLensProvider {
 }
 
 export function RegisterTranslator(ctx: ExtensionContext) {
-  console.log('RegisterTranslator')
   const beTranslatedTextDecoration = window.createTextEditorDecorationType({
     textDecoration: 'none;',
   })
@@ -53,7 +52,6 @@ export function RegisterTranslator(ctx: ExtensionContext) {
       .filter(phrase => !translationCache.has(phrase))
 
     if (!phrasesFromDoc.length) {
-      console.log('没有需要翻译的内容')
       updateDecorations()
       return
     }
@@ -71,8 +69,6 @@ export function RegisterTranslator(ctx: ExtensionContext) {
     }
 
     const translatedPhrases = translationResult.text.split('\n')
-
-    console.log('翻译结果', phrasesFromDoc, translatedPhrases)
 
     phrasesFromDoc.forEach((phrase, index) => {
       const tp = translatedPhrases[index]
@@ -134,18 +130,17 @@ export function RegisterTranslator(ctx: ExtensionContext) {
       .map(line => editor!.document.lineAt(line).range)
   }
 
-  let timeout: NodeJS.Timer | undefined
-  function triggerUpdateDecorations(_editor?: TextEditor, immediately = false) {
-    console.log('triggerUpdateDecorations')
-    updateEditor(_editor)
+  let timeoutTD: NodeJS.Timer | undefined
 
-    if (timeout) {
-      clearTimeout(timeout)
-      timeout = undefined
+  function triggerTranslateDocument(_editor?: TextEditor, immediately = false) {
+    updateEditor(_editor)
+    if (timeoutTD) {
+      clearTimeout(timeoutTD)
+      timeoutTD = undefined
     }
-    timeout = setTimeout(() => {
+    timeoutTD = setTimeout(() => {
       translateDocument()
-    }, immediately ? 0 : 200)
+    }, immediately ? 0 : 2000)
   }
 
   function updateEditor(_editor?: TextEditor) {
@@ -158,21 +153,26 @@ export function RegisterTranslator(ctx: ExtensionContext) {
   languages.registerCodeLensProvider({ scheme: 'file' }, placeholderCodeLens)
 
   window.onDidChangeActiveTextEditor((e) => {
-    triggerUpdateDecorations(e)
+    triggerTranslateDocument(e)
+    updateDecorations()
   }, null, ctx.subscriptions)
 
   workspace.onDidChangeTextDocument((event) => {
-    if (window.activeTextEditor && event.document === window.activeTextEditor.document)
-      triggerUpdateDecorations(window.activeTextEditor)
+    if (window.activeTextEditor && event.document === window.activeTextEditor.document) {
+      triggerTranslateDocument(window.activeTextEditor)
+      updateDecorations()
+    }
   }, null, ctx.subscriptions)
 
   workspace.onDidChangeConfiguration(async () => {
     onConfigUpdated()
-    triggerUpdateDecorations()
+    triggerTranslateDocument()
+    updateDecorations()
   }, null, ctx.subscriptions)
 
   window.onDidChangeVisibleTextEditors((editors) => {
-    triggerUpdateDecorations(editors[0])
+    triggerTranslateDocument(editors[0])
+    updateDecorations()
   }, null, ctx.subscriptions)
 
   window.onDidChangeTextEditorSelection((e) => {
@@ -181,7 +181,7 @@ export function RegisterTranslator(ctx: ExtensionContext) {
   })
 
   // on start up
-  triggerUpdateDecorations(window.activeTextEditor, true)
+  triggerTranslateDocument(window.activeTextEditor, true)
 }
 
 function GapLinesTextDecoration(text: string, options?: { character?: number }) {
