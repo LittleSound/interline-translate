@@ -51,6 +51,22 @@
       {
         "command": "sidecar-translate.translateSelectedText",
         "title": "Translate Selected Text"
+      },
+      {
+        "command": "sidecar-translate.startTranslatingDocuments",
+        "title": "Start translating documents"
+      },
+      {
+        "command": "sidecar-translate.stopTranslatingDocuments",
+        "title": "Stop translating documents"
+      },
+      {
+        "command": "sidecar-translate.displayOriginalText",
+        "title": "Display original text"
+      },
+      {
+        "command": "sidecar-translate.translateTheDocumentOnce",
+        "title": "translate the document once"
       }
     ],
     "configuration": {

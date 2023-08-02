@@ -1,5 +1,6 @@
-import { CodeLens, Range, languages, window, workspace } from 'vscode'
+import { CodeLens, Range, commands, languages, window, workspace } from 'vscode'
 import type { CodeLensProvider, DecorationOptions, ExtensionContext, ProviderResult, TextDocument, TextEditor } from 'vscode'
+import { effect, ref } from '@vue/reactivity'
 import { config, onConfigUpdated } from './config'
 import { REGEX_FIND_PHRASES } from './regex'
 import { translate } from './providers/tranlations/google'
@@ -33,6 +34,10 @@ export function RegisterTranslator(ctx: ExtensionContext) {
     textDecoration: 'none;',
   })
 
+  const enableContinuousTranslation = ref(false)
+  const enableContinuousTranslationOnce = ref(false)
+  const displayOriginalText = ref(false)
+
   const translationCache = new Map<string, string>()
 
   let decorations: DecorationMatch[] = []
@@ -45,6 +50,10 @@ export function RegisterTranslator(ctx: ExtensionContext) {
   async function translateDocument() {
     if (!editor)
       return
+
+    if (displayOriginalText.value || (!enableContinuousTranslation.value && !enableContinuousTranslationOnce.value))
+      return
+    enableContinuousTranslationOnce.value = false
 
     const text = editor.document.getText()
 
@@ -83,6 +92,11 @@ export function RegisterTranslator(ctx: ExtensionContext) {
     if (!editor)
       return
 
+    if (displayOriginalText.value) {
+      refreshDecorations()
+      return
+    }
+
     const text = editor.document.getText()
 
     decorations = []
@@ -116,6 +130,12 @@ export function RegisterTranslator(ctx: ExtensionContext) {
   function refreshDecorations() {
     if (!editor)
       return
+
+    if (displayOriginalText.value) {
+      editor.setDecorations(beTranslatedTextDecoration, [])
+      placeholderCodeLens.putRangeList = []
+      return
+    }
 
     editor.setDecorations(beTranslatedTextDecoration, decorations)
 
@@ -180,8 +200,32 @@ export function RegisterTranslator(ctx: ExtensionContext) {
     refreshDecorations()
   })
 
-  // on start up
-  triggerTranslateDocument(window.activeTextEditor, true)
+  effect(() => {
+    if (enableContinuousTranslation.value || enableContinuousTranslationOnce.value)
+      triggerTranslateDocument(window.activeTextEditor, true)
+  })
+
+  effect(() => {
+    if (displayOriginalText.value)
+      refreshDecorations()
+  })
+
+  commands.registerCommand('sidecar-translate.startTranslatingDocuments', () => {
+    displayOriginalText.value = false
+    enableContinuousTranslation.value = true
+  })
+  commands.registerCommand('sidecar-translate.stopTranslatingDocuments', () => {
+    enableContinuousTranslation.value = false
+  })
+  commands.registerCommand('sidecar-translate.translateTheDocumentOnce', () => {
+    displayOriginalText.value = false
+    enableContinuousTranslationOnce.value = true
+  })
+  commands.registerCommand('sidecar-translate.displayOriginalText', () => {
+    enableContinuousTranslationOnce.value = false
+    displayOriginalText.value = true
+    console.log('displayOriginalText', displayOriginalText.value)
+  })
 }
 
 function GapLinesTextDecoration(text: string, options?: { character?: number }) {
