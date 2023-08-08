@@ -41,14 +41,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "sidecar-translate.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "sidecar-translate.whatTimeIsItNow",
-        "title": "What time is it now?"
-      },
-      {
         "command": "sidecar-translate.translateSelectedText",
         "title": "Translate Selected Text"
       },
