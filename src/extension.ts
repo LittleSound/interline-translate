@@ -13,6 +13,25 @@ export function activate(ctx: vscode.ExtensionContext) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "sidecar-translate" is now active!')
 
+  let languageId = 2
+  const grammarExtensions = vscode.extensions.all.filter(({ packageJSON }) => {
+    return packageJSON.contributes && packageJSON.contributes.grammars
+  }).map(({ packageJSON, extensionPath }) => {
+    const contributesLanguages = packageJSON.contributes.languages || []
+    const languages = contributesLanguages.map((item: any) => {
+      return {
+        id: languageId++,
+        name: item.id,
+      }
+    })
+    return {
+      languages,
+      value: packageJSON.contributes.grammars,
+      extensionLocation: extensionPath,
+    }
+  })
+  console.log('grammarExtensions:', grammarExtensions)
+
   ctx.subscriptions.push(vscode.commands.registerCommand('sidecar-translate.translateSelectedText', async () => {
     const activeEditor = vscode.window.activeTextEditor
     if (!activeEditor)
