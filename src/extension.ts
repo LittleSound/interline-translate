@@ -32,6 +32,15 @@ export function activate(ctx: vscode.ExtensionContext) {
   })
   console.log('grammarExtensions:', grammarExtensions)
 
+  const grammar = grammarExtensions[0]
+  const GrammarUri = vscode.Uri.joinPath(vscode.Uri.file(grammar.extensionLocation), grammar.value[0].path)
+  console.log('grammar:', grammar)
+  console.log('GrammarUri:', GrammarUri)
+  // it works, but only local environment
+  vscode.workspace.fs.readFile(GrammarUri).then((res) => {
+    console.log('grammar file res:', res.toString())
+  })
+
   ctx.subscriptions.push(vscode.commands.registerCommand('sidecar-translate.translateSelectedText', async () => {
     const activeEditor = vscode.window.activeTextEditor
     if (!activeEditor)
