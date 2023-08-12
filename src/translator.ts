@@ -4,6 +4,7 @@ import { effect, ref } from '@vue/reactivity'
 import { config, onConfigUpdated } from './config'
 import { REGEX_FIND_PHRASES } from './regex'
 import { translate } from './providers/tranlations/google'
+import { displayOnGapLines } from './view'
 
 export interface DecorationMatch extends DecorationOptions {
   key: string
@@ -210,22 +211,54 @@ export function RegisterTranslator(ctx: ExtensionContext) {
       refreshDecorations()
   })
 
-  commands.registerCommand('sidecar-translate.startTranslatingDocuments', () => {
+  ctx.subscriptions.push(commands.registerCommand('sidecar-translate.startTranslatingDocuments', () => {
     displayOriginalText.value = false
     enableContinuousTranslation.value = true
-  })
-  commands.registerCommand('sidecar-translate.stopTranslatingDocuments', () => {
+  }))
+  ctx.subscriptions.push(commands.registerCommand('sidecar-translate.stopTranslatingDocuments', () => {
     enableContinuousTranslation.value = false
-  })
-  commands.registerCommand('sidecar-translate.translateTheDocumentOnce', () => {
+  }))
+  ctx.subscriptions.push(commands.registerCommand('sidecar-translate.translateTheDocumentOnce', () => {
     displayOriginalText.value = false
     enableContinuousTranslationOnce.value = true
-  })
-  commands.registerCommand('sidecar-translate.displayOriginalText', () => {
+  }))
+  ctx.subscriptions.push(commands.registerCommand('sidecar-translate.displayOriginalText', () => {
     enableContinuousTranslationOnce.value = false
     displayOriginalText.value = true
     console.log('displayOriginalText', displayOriginalText.value)
-  })
+  }))
+
+  // Translate selected text
+  ctx.subscriptions.push(commands.registerCommand('sidecar-translate.translateSelectedText', async () => {
+    const activeEditor = window.activeTextEditor
+    if (!activeEditor)
+      return
+
+    let range: Range = activeEditor.selection
+
+    // If the user has not selected any text, use the word where the cursor is located.
+    if (range.start.isEqual(range.end))
+      range = activeEditor.document.getWordRangeAtPosition(range.start) || range
+
+    const res = await translate({
+      text: activeEditor.document.getText(range),
+      from: 'en',
+      to: config.defaultTargetLanguage as any,
+    })
+
+    if (!res.ok) {
+      window.showErrorMessage(res.message)
+      return
+    }
+
+    displayOnGapLines(activeEditor, [
+      {
+        range,
+        text: res.text,
+        character: range.isSingleLine ? range.start.character : 0,
+      },
+    ])
+  }))
 }
 
 function GapLinesTextDecoration(text: string, options?: { character?: number }) {

@@ -47,6 +47,9 @@ devDependencies:
   typescript:
     specifier: ^5.1.3
     version: 5.1.3
+  vscode-textmate:
+    specifier: ^9.0.0
+    version: 9.0.0
 
 packages:
 
@@ -1134,7 +1137,7 @@ packages:
     dependencies:
       debug: 3.2.7
       is-core-module: 2.12.1
-      resolve: 1.22.2
+      resolve: 1.22.3
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -2592,6 +2595,10 @@ packages:
     dependencies:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
+    dev: true
+
+  /vscode-textmate@9.0.0:
+    resolution: {integrity: sha512-Cl65diFGxz7gpwbav10HqiY/eVYTO1sjQpmRmV991Bj7wAoOAjGQ97PpQcXorDE2Uc4hnGWLY17xme+5t6MlSg==}
     dev: true
 
   /vue-eslint-parser@9.3.1(eslint@8.41.0):
