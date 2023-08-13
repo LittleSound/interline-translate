@@ -1,11 +1,6 @@
-import type { ExtensionContext, Uri } from 'vscode'
+import type { ExtensionContext } from 'vscode'
 import { extensions } from 'vscode'
-
-export interface GrammarExtension {
-  languages: any
-  value: any
-  extensionUri: Uri
-}
+import type { GrammarExtension } from './types'
 
 let grammarExtensions: GrammarExtension[] = []
 
@@ -17,7 +12,8 @@ export async function RegisterGrammar(ctx: ExtensionContext) {
   let languageId = 2
   grammarExtensions = extensions.all.filter(({ packageJSON }) => {
     return packageJSON.contributes && packageJSON.contributes.grammars
-  }).map(({ packageJSON, extensionUri }) => {
+  }).map((ext) => {
+    const { packageJSON } = ext
     const contributesLanguages = packageJSON.contributes.languages || []
     const languages = contributesLanguages.map((item: any) => {
       return {
@@ -26,9 +22,9 @@ export async function RegisterGrammar(ctx: ExtensionContext) {
       }
     })
     return {
+      ...ext,
       languages,
       value: packageJSON.contributes.grammars,
-      extensionUri,
     }
   })
 
