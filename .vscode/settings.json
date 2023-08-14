@@ -14,5 +14,8 @@
         "pkg/mod/golang.org/x/text@v0.10.0/cmd/gotext/examples/extract_http/locales",
         "pkg/mod/golang.org/x/text@v0.10.0/cmd/gotext/examples/extract/locales",
         "pkg/mod/golang.org/x/text@v0.10.0/message/pipeline/testdata/test1/locales"
+    ],
+    "cSpell.words": [
+        "Onig"
     ]
 }

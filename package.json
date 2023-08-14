@@ -37,6 +37,7 @@
     "mocha": "^10.2.0",
     "ofetch": "^1.1.1",
     "typescript": "^5.1.3",
+    "vscode-oniguruma": "^1.7.0",
     "vscode-textmate": "^9.0.0"
   },
   "contributes": {

@@ -1,6 +1,9 @@
 import type { ExtensionContext } from 'vscode'
-import { extensions } from 'vscode'
-import type { GrammarExtension } from './types'
+import { Uri, extensions, workspace } from 'vscode'
+import { Registry, parseRawGrammar } from 'vscode-textmate'
+import type { ContributesGrammar, GrammarExtension } from './types'
+import { } from 'vscode-oniguruma'
+import { getOnigurumaLib } from './oniguruma'
 
 let grammarExtensions: GrammarExtension[] = []
 
@@ -73,3 +76,40 @@ export async function RegisterGrammar(ctx: ExtensionContext) {
 //     }
 //   }))
 // }
+
+let grammarRegistry: Registry
+
+export function getGrammarRegistry(ctx: ExtensionContext) {
+  if (!grammarRegistry) {
+    grammarRegistry = new Registry({
+      onigLib: getOnigurumaLib(ctx),
+      loadGrammar: async (scopeName) => {
+        const { grammarExtension, contributesGrammar } = getGrammarInfoByScopeName(scopeName)
+        if (!contributesGrammar || !grammarExtension)
+          return null
+
+        const GrammarUri = Uri.joinPath(grammarExtension.extensionUri, contributesGrammar.path)
+        return workspace.fs.readFile(GrammarUri).then((res) => {
+          const str = String.fromCharCode.apply(null, res as any)
+          return parseRawGrammar(str, GrammarUri.fsPath)
+        })
+      },
+    })
+  }
+
+  return grammarRegistry
+}
+
+export function getGrammarInfoByScopeName(scopeName: string) {
+  let contributesGrammar: ContributesGrammar | undefined
+
+  const grammarExtension = grammarExtensions.find((item) => {
+    contributesGrammar = item.value.find(grammar => grammar.scopeName === scopeName)
+    return contributesGrammar
+  })
+
+  return {
+    grammarExtension,
+    contributesGrammar,
+  }
+}

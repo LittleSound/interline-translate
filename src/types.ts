@@ -5,7 +5,7 @@ export interface GrammarExtension<T = any> extends Extension<T> {
     id: number
     name: string
   }
-  value: any
+  value: ContributesGrammar[]
 }
 
 export interface ContributesGrammar {

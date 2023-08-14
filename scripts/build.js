@@ -1,6 +1,10 @@
 const process = require('node:process')
+const { join } = require('node:path')
+const { sh } = require('./utils/sh')
 
-function build({ platform = 'node', outfile = 'out/extension.js' }) {
+async function build({ platform = 'node', outfile = 'out/extension.js' }) {
+  await sh(`cp "${join(__filename, '../node_modules/vscode-oniguruma/release/onig.wasm')}" "${join(__filename, '../out/oniguruma.wasm')}" `)
+
   return require('esbuild').build({
     entryPoints: [
       './src/extension.ts',
@@ -20,11 +24,11 @@ function build({ platform = 'node', outfile = 'out/extension.js' }) {
   })
 }
 
-build({
+await build({
   platform: 'node',
   outfile: 'out/extension.js',
 })
-build({
+await build({
   platform: 'browser',
   outfile: 'out/web-extension.js',
 })
