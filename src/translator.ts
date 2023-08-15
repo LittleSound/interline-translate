@@ -5,6 +5,7 @@ import { config, onConfigUpdated } from './config'
 import { REGEX_FIND_PHRASES } from './regex'
 import { translate } from './providers/tranlations/google'
 import { displayOnGapLines } from './view'
+import { parseDocumentToTokens } from './grammar'
 
 export interface DecorationMatch extends DecorationOptions {
   key: string
@@ -230,9 +231,17 @@ export function RegisterTranslator(ctx: ExtensionContext) {
 
   // Translate selected text
   ctx.subscriptions.push(commands.registerCommand('sidecar-translate.translateSelectedText', async () => {
+    console.log('start sidecar-translate.translateSelectedText')
     const activeEditor = window.activeTextEditor
     if (!activeEditor)
       return
+
+    const tokens = await parseDocumentToTokens({
+      context: ctx,
+      textDocument: activeEditor.document,
+    })
+
+    console.log('Active Document Grammar Tokens:', tokens)
 
     let range: Range = activeEditor.selection
 

@@ -1,18 +1,21 @@
-import type { ExtensionContext } from 'vscode'
-import { Uri, extensions, workspace } from 'vscode'
-import { Registry, parseRawGrammar } from 'vscode-textmate'
+import type { ExtensionContext, TextDocument } from 'vscode'
+import { UIKind, Uri, env, extensions, workspace } from 'vscode'
+import type { IToken } from 'vscode-textmate'
+import { INITIAL, Registry, parseRawGrammar } from 'vscode-textmate'
 import type { ContributesGrammar, GrammarExtension } from './types'
 import { } from 'vscode-oniguruma'
 import { getOnigurumaLib } from './oniguruma'
 
+let languageId = 2
 let grammarExtensions: GrammarExtension[] = []
+const scopeNameGrammarPair = new Map<string, { grammarExtension: GrammarExtension<any>; contributesGrammar: ContributesGrammar }>()
+const languageScopeNamePair = new Map<string, string>()
 
 export function getGrammarExtensions() {
   return grammarExtensions
 }
 
 export async function RegisterGrammar(ctx: ExtensionContext) {
-  let languageId = 2
   grammarExtensions = extensions.all.filter(({ packageJSON }) => {
     return packageJSON.contributes && packageJSON.contributes.grammars
   }).map((ext) => {
@@ -32,7 +35,37 @@ export async function RegisterGrammar(ctx: ExtensionContext) {
   })
 
   // If it is a remote environment, use the built-in syntax of the plugin.
-  // if (env.remoteName) {
+  if (env.remoteName)
+    await registerRemoteGrammar(ctx)
+
+  console.log('grammarExtensions:', grammarExtensions)
+
+  grammarExtensions.forEach((grammarExtension) => {
+    grammarExtension.value.forEach((grammar) => {
+      scopeNameGrammarPair.set(grammar.scopeName, {
+        grammarExtension,
+        contributesGrammar: grammar,
+      })
+
+      const language = grammar.language
+      if (language)
+        languageScopeNamePair.set(language, grammar.scopeName)
+    })
+  })
+}
+
+// eslint-disable-next-line unused-imports/no-unused-vars
+export async function registerRemoteGrammar(ctx: ExtensionContext) {
+  // async function readResources(context: ExtensionContext) {
+  //   const resources = await readdirSync(`${context.extensionPath}/resources`)
+  //   return Promise.all(resources.map(async (extension) => {
+  //     return {
+  //       packageJSON: JSON.parse(await readFileSync(`${context.extensionPath}/resources/${extension}/package.json`, 'utf-8')),
+  //       extensionLocation: `${context.extensionPath}/resources/${extension}`,
+  //     }
+  //   }))
+  // }
+
   //   const inner = await readResources(context)
   //   const innergrammarExtensions: IGrammarExtensions[] = inner.filter(({ packageJSON }) => {
   //     return packageJSON.contributes && packageJSON.contributes.grammars
@@ -51,35 +84,11 @@ export async function RegisterGrammar(ctx: ExtensionContext) {
   //     }
   //   })
   //   grammarExtensions.push(...innergrammarExtensions)
-  // }
-
-  console.log('grammarExtensions:', grammarExtensions)
-
-  // test read grammar file
-  // const grammar = grammarExtensions[0]
-  // const GrammarUri = Uri.joinPath(grammar.extensionUri, grammar.value[0].path)
-  // console.log('grammar:', grammar)
-  // console.log('GrammarUri:', GrammarUri)
-
-  // workspace.fs.readFile(GrammarUri).then((res) => {
-  //   const str = String.fromCharCode.apply(null, res as any)
-  //   console.log('grammar file:', str)
-  // })
 }
-
-// async function readResources(context: ExtensionContext) {
-//   const resources = await readdirSync(`${context.extensionPath}/resources`)
-//   return Promise.all(resources.map(async (extension) => {
-//     return {
-//       packageJSON: JSON.parse(await readFileSync(`${context.extensionPath}/resources/${extension}/package.json`, 'utf-8')),
-//       extensionLocation: `${context.extensionPath}/resources/${extension}`,
-//     }
-//   }))
-// }
 
 let grammarRegistry: Registry
 
-export function getGrammarRegistry(ctx: ExtensionContext) {
+export function useGrammarRegistry(ctx: ExtensionContext) {
   if (!grammarRegistry) {
     grammarRegistry = new Registry({
       onigLib: getOnigurumaLib(ctx),
@@ -89,8 +98,14 @@ export function getGrammarRegistry(ctx: ExtensionContext) {
           return null
 
         const GrammarUri = Uri.joinPath(grammarExtension.extensionUri, contributesGrammar.path)
-        return workspace.fs.readFile(GrammarUri).then((res) => {
-          const str = String.fromCharCode.apply(null, res as any)
+
+        return workspace.fs.readFile(GrammarUri).then(async (res) => {
+          const str = env.uiKind === UIKind.Web
+            ? await arrayBufferToString(res)
+            : res.toString()
+
+          console.log('grammar file:', str)
+
           return parseRawGrammar(str, GrammarUri.fsPath)
         })
       },
@@ -101,15 +116,48 @@ export function getGrammarRegistry(ctx: ExtensionContext) {
 }
 
 export function getGrammarInfoByScopeName(scopeName: string) {
-  let contributesGrammar: ContributesGrammar | undefined
+  return { ...scopeNameGrammarPair.get(scopeName) }
+}
 
-  const grammarExtension = grammarExtensions.find((item) => {
-    contributesGrammar = item.value.find(grammar => grammar.scopeName === scopeName)
-    return contributesGrammar
-  })
+export async function parseDocumentToTokens(options: { textDocument: TextDocument; context: ExtensionContext }): Promise<IToken[][]> {
+  const { textDocument: doc, context: ctx } = options
 
-  return {
-    grammarExtension,
-    contributesGrammar,
+  const tokensOfLines: IToken[][] = []
+
+  const registry = useGrammarRegistry(ctx)
+
+  const scopeName = languageScopeNamePair.get(doc.languageId)
+  if (!scopeName)
+    return tokensOfLines
+
+  const grammar = await registry.loadGrammar(scopeName)
+  if (!grammar)
+    return tokensOfLines
+
+  const lines = doc.getText().split('\n')
+
+  console.log('lines:', lines)
+
+  let ruleStack = INITIAL
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const lineTokens = grammar.tokenizeLine(line, ruleStack)
+    ruleStack = lineTokens.ruleStack
+
+    tokensOfLines.push(lineTokens.tokens)
   }
+
+  return tokensOfLines
+}
+
+function arrayBufferToString(uint8array: Uint8Array): Promise<string> {
+  return new Promise((resolve) => {
+    const bb = new Blob([uint8array])
+    // @ts-expect-error web only
+    const f = new FileReader()
+    f.onload = function (e: any) {
+      resolve(e.target.result)
+    }
+    f.readAsText(bb)
+  })
 }
