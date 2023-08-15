@@ -104,7 +104,7 @@ export function useGrammarRegistry(ctx: ExtensionContext) {
             ? await arrayBufferToString(res)
             : res.toString()
 
-          console.log('grammar file:', str)
+          // console.log('grammar file:', str)
 
           return parseRawGrammar(str, GrammarUri.fsPath)
         })

@@ -241,7 +241,8 @@ export function RegisterTranslator(ctx: ExtensionContext) {
       textDocument: activeEditor.document,
     })
 
-    console.log('Active Document Grammar Tokens:', tokens)
+    console.log(`Active Document Grammar Tokens(length:${tokens.length}):`)
+    console.log('line1:', tokens[0])
 
     let range: Range = activeEditor.selection
 
