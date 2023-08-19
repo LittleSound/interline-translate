@@ -1,9 +1,12 @@
 const process = require('node:process')
-const { join } = require('node:path')
+const { join, resolve } = require('node:path')
 const { sh } = require('./utils/sh')
 
 function build({ platform = 'node', outfile = 'out/extension.js' }) {
   return require('esbuild').build({
+    alias: {
+      '~/': `${resolve(__dirname, 'src')}/`,
+    },
     entryPoints: [
       './src/extension.ts',
     ],
