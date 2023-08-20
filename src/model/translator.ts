@@ -1,5 +1,5 @@
 import { type TextDocument, window } from 'vscode'
-import { isComment, isString, parseDocumentToTokens } from './grammar'
+import { isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 import { useTranslationCache } from '~/model/cache'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { translate } from '~/providers/tranlations/google'
@@ -56,6 +56,9 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
       continue
 
     if (isString(startPos.character, tokens[startPos.line]))
+      continue
+
+    if (isKeyword(startPos.character, tokens[startPos.line]))
       continue
 
     phrasesFromDoc.push(phrases)

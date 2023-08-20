@@ -9,7 +9,7 @@ import { useTranslationCache } from '~/model/cache'
 import type { Context } from '~/context'
 import { translateDocument, useTranslationMeta } from '~/model/translator'
 import { useExtensionContext } from '~/dependence/extensionContext'
-import { isComment, isString, parseDocumentToTokens } from '~/model/grammar'
+import { isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -66,6 +66,8 @@ export function RegisterTranslator(ctx: Context) {
       if (isComment(startPos.character, tokens[startPos.line]))
         continue
       if (isString(startPos.character, tokens[startPos.line]))
+        continue
+      if (isKeyword(startPos.character, tokens[startPos.line]))
         continue
 
       decorations.push({

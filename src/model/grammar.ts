@@ -159,36 +159,47 @@ function arrayBufferToString(uint8array: Uint8Array): Promise<string> {
   })
 }
 
+export function isScopes(character: number, tokensOfLine: IToken[], refScopes: readonly string[]) {
+  return tokensOfLine.some((token) => {
+    const { scopes: tokenScopes, startIndex, endIndex } = token
+
+    if (character < startIndex || character >= endIndex)
+      return false
+
+    return refScopes.some(refScope => tokenScopes.some(scope => scope.startsWith(refScope)))
+  })
+}
+
 const commentScopes = [
   'punctuation.definition.comment',
   'comment.block',
   'comment.line',
 ] as const
+export function isComment(character: number, tokensOfLine: IToken[]) {
+  return isScopes(character, tokensOfLine, commentScopes)
+}
 
 const stringScopes = [
   'string.unquoted', // yaml, etc., unquoted String
   'string.interpolated', // dart language compatibility
   'string.quoted',
+  'string.template',
   'punctuation.definition.string',
   'constant.character.escape',
+  'text.html.derivative', // TODO: HTML needs separate optimization
 ] as const
-
-export function isComment(character: number, tokensOfLine: IToken[]) {
-  return tokensOfLine.some((token) => {
-    const { scopes, startIndex, endIndex } = token
-    if (character < startIndex || character > endIndex)
-      return false
-
-    return commentScopes.some(refScope => scopes.some(scope => scope.startsWith(refScope)))
-  })
+export function isString(character: number, tokensOfLine: IToken[]) {
+  return isScopes(character, tokensOfLine, stringScopes)
 }
 
-export function isString(character: number, tokensOfLine: IToken[]) {
-  return tokensOfLine.some((token) => {
-    const { scopes, startIndex, endIndex } = token
-    if (character < startIndex || character > endIndex)
-      return false
-
-    return stringScopes.some(refScope => scopes.some(scope => scope.startsWith(refScope)))
-  })
+const keywordScopes = [
+  'keyword',
+  'storage.type',
+  'support.type.primitive',
+  'storage.modifier',
+  'constant.language.boolean',
+  'support.type.builtin',
+] as const
+export function isKeyword(character: number, tokensOfLine: IToken[]) {
+  return isScopes(character, tokensOfLine, keywordScopes)
 }
