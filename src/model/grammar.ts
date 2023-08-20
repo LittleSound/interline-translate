@@ -1,10 +1,11 @@
-import type { ExtensionContext, TextDocument } from 'vscode'
+import type { TextDocument } from 'vscode'
 import { UIKind, Uri, env, extensions, workspace } from 'vscode'
 import type { IToken } from 'vscode-textmate'
 import { INITIAL, Registry, parseRawGrammar } from 'vscode-textmate'
-import type { ContributesGrammar, GrammarExtension } from './types'
+import type { ContributesGrammar, GrammarExtension } from '~/types'
 import { } from 'vscode-oniguruma'
-import { getOnigurumaLib } from './oniguruma'
+import { getOnigurumaLib } from '~/model/oniguruma'
+import type { Context } from '~/context'
 
 let languageId = 2
 let grammarExtensions: GrammarExtension[] = []
@@ -15,7 +16,7 @@ export function getGrammarExtensions() {
   return grammarExtensions
 }
 
-export async function RegisterGrammar(ctx: ExtensionContext) {
+export async function RegisterGrammar(ctx: Context) {
   grammarExtensions = extensions.all.filter(({ packageJSON }) => {
     return packageJSON.contributes && packageJSON.contributes.grammars
   }).map((ext) => {
@@ -55,7 +56,7 @@ export async function RegisterGrammar(ctx: ExtensionContext) {
 }
 
 // eslint-disable-next-line unused-imports/no-unused-vars
-export async function registerRemoteGrammar(ctx: ExtensionContext) {
+export async function registerRemoteGrammar(ctx: Context) {
   // async function readResources(context: ExtensionContext) {
   //   const resources = await readdirSync(`${context.extensionPath}/resources`)
   //   return Promise.all(resources.map(async (extension) => {
@@ -88,29 +89,27 @@ export async function registerRemoteGrammar(ctx: ExtensionContext) {
 
 let grammarRegistry: Registry
 
-export function useGrammarRegistry(ctx: ExtensionContext) {
-  if (!grammarRegistry) {
-    grammarRegistry = new Registry({
-      onigLib: getOnigurumaLib(ctx),
-      loadGrammar: async (scopeName) => {
-        const { grammarExtension, contributesGrammar } = getGrammarInfoByScopeName(scopeName)
-        if (!contributesGrammar || !grammarExtension)
-          return null
+export function useGrammarRegistry() {
+  grammarRegistry ??= new Registry({
+    onigLib: getOnigurumaLib(),
+    loadGrammar: async (scopeName) => {
+      const { grammarExtension, contributesGrammar } = getGrammarInfoByScopeName(scopeName)
+      if (!contributesGrammar || !grammarExtension)
+        return null
 
-        const GrammarUri = Uri.joinPath(grammarExtension.extensionUri, contributesGrammar.path)
+      const GrammarUri = Uri.joinPath(grammarExtension.extensionUri, contributesGrammar.path)
 
-        return workspace.fs.readFile(GrammarUri).then(async (res) => {
-          const str = env.uiKind === UIKind.Web
-            ? await arrayBufferToString(res)
-            : res.toString()
+      return workspace.fs.readFile(GrammarUri).then(async (res) => {
+        const str = env.uiKind === UIKind.Web
+          ? await arrayBufferToString(res)
+          : res.toString()
 
-          // console.log('grammar file:', str)
+        // console.log('grammar file:', str)
 
-          return parseRawGrammar(str, GrammarUri.fsPath)
-        })
-      },
-    })
-  }
+        return parseRawGrammar(str, GrammarUri.fsPath)
+      })
+    },
+  })
 
   return grammarRegistry
 }
@@ -119,12 +118,12 @@ export function getGrammarInfoByScopeName(scopeName: string) {
   return { ...scopeNameGrammarPair.get(scopeName) }
 }
 
-export async function parseDocumentToTokens(options: { textDocument: TextDocument; context: ExtensionContext }): Promise<IToken[][]> {
-  const { textDocument: doc, context: ctx } = options
+export async function parseDocumentToTokens(options: { textDocument: TextDocument }): Promise<IToken[][]> {
+  const { textDocument: doc } = options
 
   const tokensOfLines: IToken[][] = []
 
-  const registry = useGrammarRegistry(ctx)
+  const registry = useGrammarRegistry()
 
   const scopeName = languageScopeNamePair.get(doc.languageId)
   if (!scopeName)
@@ -159,5 +158,39 @@ function arrayBufferToString(uint8array: Uint8Array): Promise<string> {
       resolve(e.target.result)
     }
     f.readAsText(bb)
+  })
+}
+
+const commentScopes = [
+  'punctuation.definition.comment',
+  'comment.block',
+  'comment.line',
+] as const
+
+const stringScopes = [
+  'string.unquoted', // yaml, etc., unquoted String
+  'string.interpolated', // dart language compatibility
+  'string.quoted',
+  'punctuation.definition.string',
+  'constant.character.escape',
+] as const
+
+export function isComment(character: number, tokensOfLine: IToken[]) {
+  return tokensOfLine.some((token) => {
+    const { scopes, startIndex, endIndex } = token
+    if (character < startIndex || character > endIndex)
+      return false
+
+    return commentScopes.some(scope => scopes.includes(scope))
+  })
+}
+
+export function isString(character: number, tokensOfLine: IToken[]) {
+  return tokensOfLine.some((token) => {
+    const { scopes, startIndex, endIndex } = token
+    if (character < startIndex || character > endIndex)
+      return false
+
+    return stringScopes.some(scope => scopes.includes(scope))
   })
 }

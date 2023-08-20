@@ -1,9 +1,8 @@
 import { computed, reactive, ref } from '@vue/reactivity'
-import { workspace } from 'vscode'
+import { Uri, workspace } from 'vscode'
 import { EXT_NAMESPACE } from './meta'
-
-export const googleProxy = ''
-export const secondLanguage = ''
+import { useExtensionContext } from './dependence/extensionContext'
+import type { Context } from '~/context'
 
 const _configState = ref(0)
 
@@ -49,4 +48,11 @@ export const config = reactive({
   corsProxy: createConfigRef(`${EXT_NAMESPACE}.corsProxy`, ''),
 
   textSize: 0.9,
+
+  extensionUri: Uri.file(''),
 })
+
+export function registerConfig(ctx: Context) {
+  const extCtx = useExtensionContext(ctx)
+  config.extensionUri = extCtx.extensionUri
+}

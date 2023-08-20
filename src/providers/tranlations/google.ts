@@ -1,6 +1,6 @@
 import { FetchError, ofetch } from 'ofetch'
-import { config } from '../../config'
 import type { TranslationParameters, TranslationResult } from './types'
+import { config } from '~/config'
 
 export const info = {
   name: 'google',

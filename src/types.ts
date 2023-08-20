@@ -1,4 +1,4 @@
-import type { Extension } from 'vscode'
+import type { DecorationOptions, Extension } from 'vscode'
 
 export interface GrammarExtension<T = any> extends Extension<T> {
   languages: {
@@ -24,3 +24,9 @@ export interface EmbeddedLanguagesMap {
 export interface ContributesGrammarTokenTypes {
   [scopeName: string]: string
 }
+
+export interface DecorationMatch extends DecorationOptions {
+  key: string
+}
+
+export type Fn = (...p: any[]) => any
