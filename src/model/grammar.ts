@@ -1,5 +1,5 @@
-import type { TextDocument } from 'vscode'
-import { UIKind, Uri, env, extensions, workspace } from 'vscode'
+import type { Position, TextDocument } from 'vscode'
+import { Range, UIKind, Uri, env, extensions, workspace } from 'vscode'
 import type { IToken } from 'vscode-textmate'
 import { INITIAL, Registry, parseRawGrammar } from 'vscode-textmate'
 import type { ContributesGrammar, GrammarExtension } from '~/types'
@@ -159,27 +159,42 @@ function arrayBufferToString(uint8array: Uint8Array): Promise<string> {
   })
 }
 
-export function isScopes(character: number, tokensOfLine: IToken[], refScopes: readonly string[]) {
-  return tokensOfLine.some((token) => {
+export function findScopes(character: number, tokensOfLine: IToken[], refScopes: readonly string[]): { refScope: string; token: IToken; index: number } | undefined {
+  let result
+  tokensOfLine.some((token, index) => {
     const { scopes: tokenScopes, startIndex, endIndex } = token
 
     if (character < startIndex || character >= endIndex)
       return false
 
-    return refScopes.some(refScope => tokenScopes.some(scope => scope.startsWith(refScope)))
+    return refScopes.some(refScope => tokenScopes.some((scope) => {
+      const isPrefix = scope.startsWith(refScope)
+
+      if (isPrefix) {
+        result = {
+          refScope,
+          index,
+          token,
+        }
+      }
+
+      return isPrefix
+    }))
   })
+
+  return result
 }
 
-const commentScopes = [
+export const CommentScopes = [
   'punctuation.definition.comment',
   'comment.block',
   'comment.line',
 ] as const
 export function isComment(character: number, tokensOfLine: IToken[]) {
-  return isScopes(character, tokensOfLine, commentScopes)
+  return !!findScopes(character, tokensOfLine, CommentScopes)
 }
 
-const stringScopes = [
+export const StringScopes = [
   'string.unquoted', // yaml, etc., unquoted String
   'string.interpolated', // dart language compatibility
   'string.quoted',
@@ -189,10 +204,10 @@ const stringScopes = [
   'text.html.derivative', // TODO: HTML needs separate optimization
 ] as const
 export function isString(character: number, tokensOfLine: IToken[]) {
-  return isScopes(character, tokensOfLine, stringScopes)
+  return !!findScopes(character, tokensOfLine, StringScopes)
 }
 
-const keywordScopes = [
+export const KeywordScopes = [
   'keyword',
   'storage.type',
   'support.type.primitive',
@@ -201,5 +216,39 @@ const keywordScopes = [
   'support.type.builtin',
 ] as const
 export function isKeyword(character: number, tokensOfLine: IToken[]) {
-  return isScopes(character, tokensOfLine, keywordScopes)
+  return !!findScopes(character, tokensOfLine, KeywordScopes)
+}
+
+// 获取 scope 的范围
+export function findScopesRange(options: { tokensOfDoc: IToken[][]; refScopes: readonly string[]; position: Position }): Range | undefined {
+  const { tokensOfDoc, refScopes, position } = options
+
+  let startPos: Position | undefined
+  let endPos: Position | undefined
+  let indexPos = position.with()
+
+  while (true) {
+    const tokensOfLine = tokensOfDoc[indexPos.line]
+    if (!tokensOfLine)
+      break
+
+    const found = findScopes(indexPos.character, tokensOfLine, refScopes)
+
+    if (found) {
+      startPos ??= indexPos.with(undefined, found.token.startIndex)
+      endPos = indexPos.with(undefined, found.token.endIndex)
+
+      indexPos = found.index === tokensOfLine.length - 1
+        ? indexPos.with(indexPos.line + 1, 0)
+        : indexPos.with(undefined, tokensOfLine[found.index + 1].startIndex)
+
+      continue
+    }
+
+    break
+  }
+
+  return startPos && endPos
+    ? new Range(startPos, endPos)
+    : undefined
 }

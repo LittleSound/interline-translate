@@ -9,7 +9,7 @@ import { useTranslationCache } from '~/model/cache'
 import type { Context } from '~/context'
 import { translateDocument, useTranslationMeta } from '~/model/translator'
 import { useExtensionContext } from '~/dependence/extensionContext'
-import { isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
+import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -63,10 +63,32 @@ export function RegisterTranslator(ctx: Context) {
       const endPos = editor.document.positionAt(match.index + key.length)
       const range = new Range(startPos, endPos)
 
-      if (isComment(startPos.character, tokens[startPos.line]))
+      if (isComment(startPos.character, tokens[startPos.line])) {
+        const scopesRange = findScopesRange({
+          position: startPos,
+          tokensOfDoc: tokens,
+          refScopes: CommentScopes,
+        })
+        if (scopesRange) {
+          // skip the comment
+          regex.lastIndex = editor.document.offsetAt(scopesRange.end)
+        }
         continue
-      if (isString(startPos.character, tokens[startPos.line]))
+      }
+
+      if (isString(startPos.character, tokens[startPos.line])) {
+        const scopesRange = findScopesRange({
+          position: startPos,
+          tokensOfDoc: tokens,
+          refScopes: StringScopes,
+        })
+        if (scopesRange) {
+          // skip the string
+          regex.lastIndex = editor.document.offsetAt(scopesRange.end)
+        }
         continue
+      }
+
       if (isKeyword(startPos.character, tokens[startPos.line]))
         continue
 

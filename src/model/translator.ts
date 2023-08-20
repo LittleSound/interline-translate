@@ -1,5 +1,5 @@
 import { type TextDocument, window } from 'vscode'
-import { isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
+import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 import { useTranslationCache } from '~/model/cache'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { translate } from '~/providers/tranlations/google'
@@ -52,17 +52,46 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
 
     const startPos = textDocument.positionAt(match.index)
 
-    if (isComment(startPos.character, tokens[startPos.line]))
-      continue
+    if (isComment(startPos.character, tokens[startPos.line])) {
+      const scopesRange = findScopesRange({
+        position: startPos,
+        tokensOfDoc: tokens,
+        refScopes: CommentScopes,
+      })
+      if (scopesRange) {
+        const snippet = textDocument.getText(scopesRange)
+        commentsFromDoc.push(snippet)
 
-    if (isString(startPos.character, tokens[startPos.line]))
+        // skip the comment
+        regex.lastIndex = textDocument.offsetAt(scopesRange.end)
+      }
       continue
+    }
+
+    if (isString(startPos.character, tokens[startPos.line])) {
+      const scopesRange = findScopesRange({
+        position: startPos,
+        tokensOfDoc: tokens,
+        refScopes: StringScopes,
+      })
+      if (scopesRange) {
+        const snippet = textDocument.getText(scopesRange)
+        stringsFromDoc.push(snippet)
+
+        // skip the string
+        regex.lastIndex = textDocument.offsetAt(scopesRange.end)
+      }
+      continue
+    }
 
     if (isKeyword(startPos.character, tokens[startPos.line]))
       continue
 
     phrasesFromDoc.push(phrases)
   }
+
+  console.log('skip comments:', commentsFromDoc)
+  console.log('skip strings:', stringsFromDoc)
 
   if (!phrasesFromDoc.length)
     return
