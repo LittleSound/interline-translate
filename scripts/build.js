@@ -5,7 +5,7 @@ const { sh } = require('./utils/sh')
 function build({ platform = 'node', outfile = 'out/extension.js' }) {
   return require('esbuild').build({
     alias: {
-      '~/': `${resolve(__dirname, 'src')}/`,
+      '~/*': `${resolve(__dirname, 'src')}/`,
     },
     entryPoints: [
       './src/extension.ts',

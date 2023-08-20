@@ -135,8 +135,6 @@ export async function parseDocumentToTokens(options: { textDocument: TextDocumen
 
   const lines = doc.getText().split('\n')
 
-  console.log('lines:', lines)
-
   let ruleStack = INITIAL
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
@@ -181,7 +179,7 @@ export function isComment(character: number, tokensOfLine: IToken[]) {
     if (character < startIndex || character > endIndex)
       return false
 
-    return commentScopes.some(scope => scopes.includes(scope))
+    return commentScopes.some(refScope => scopes.some(scope => scope.startsWith(refScope)))
   })
 }
 
@@ -191,6 +189,6 @@ export function isString(character: number, tokensOfLine: IToken[]) {
     if (character < startIndex || character > endIndex)
       return false
 
-    return stringScopes.some(scope => scopes.includes(scope))
+    return stringScopes.some(refScope => scopes.some(scope => scope.startsWith(refScope)))
   })
 }
