@@ -95,7 +95,7 @@ export function RegisterTranslator(ctx: Context) {
       decorations.push({
         key,
         range,
-        renderOptions: GapLinesTextDecoration(translatedText, { character: range.isSingleLine ? range.start.character : 0 }),
+        renderOptions: GapLinesTextDecoration(translatedText),
       })
     }
 

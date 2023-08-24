@@ -1,14 +1,13 @@
 import type { CancellationToken, CodeLensProvider, ProviderResult, Range, TextDocument, TextEditor } from 'vscode'
 import { CodeLens, languages, window } from 'vscode'
-
-const textSize = 0.9
+import { config } from '~/config'
 
 function helloWorldDecoration(text: string, {
   character = 0,
 }: { character?: number }) {
   return window.createTextEditorDecorationType({
-    after: {
-      textDecoration: `none; position: absolute; bottom: ${-1.3 / textSize}em; left: ${character / textSize}ch; font-size: ${textSize}em;`,
+    before: {
+      textDecoration: `none; font-size: ${config.textSize}em; display: inline-block; position: relative; width: 0; bottom: ${-1.3 / config.textSize}em; left: ${character / config.textSize}ch;`,
       contentText: text,
       color: 'var(--vscode-editorCodeLens-foreground)',
     },

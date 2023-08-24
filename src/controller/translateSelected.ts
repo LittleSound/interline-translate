@@ -1,8 +1,8 @@
 import type { Range } from 'vscode'
 import { commands, window } from 'vscode'
-import { config } from '~/config'
 import type { Context } from '~/context'
 import { useExtensionContext } from '~/dependence/extensionContext'
+import { useTranslationMeta } from '~/model/translator'
 import { translate } from '~/providers/tranlations/google'
 import { displayOnGapLines } from '~/view'
 
@@ -21,10 +21,12 @@ export function RegisterTranslateSelectedText(ctx: Context) {
     if (range.start.isEqual(range.end))
       range = activeEditor.document.getWordRangeAtPosition(range.start) || range
 
+    const meta = useTranslationMeta()
+
     const res = await translate({
       text: activeEditor.document.getText(range),
-      from: 'en',
-      to: config.defaultTargetLanguage as any,
+      from: meta.from as string as any,
+      to: meta.to as string as any,
     })
 
     if (!res.ok) {
@@ -36,7 +38,6 @@ export function RegisterTranslateSelectedText(ctx: Context) {
       {
         range,
         text: res.text,
-        character: range.isSingleLine ? range.start.character : 0,
       },
     ])
   }))

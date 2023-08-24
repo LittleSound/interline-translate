@@ -5,8 +5,8 @@ import { config } from '~/config'
 export function GapLinesTextDecoration(text: string, options?: { character?: number }) {
   const { character = 0 } = options || {}
   return {
-    after: {
-      textDecoration: `none; position: absolute; bottom: ${-1.3 / config.textSize}em; left: ${character / config.textSize}ch; font-size: ${config.textSize}em;`,
+    before: {
+      textDecoration: `none; font-size: ${config.textSize}em; display: inline-block; position: relative; width: 0; bottom: ${-1.3 / config.textSize}em; left: ${character / config.textSize}ch;`,
       contentText: text,
       color: 'var(--vscode-editorCodeLens-foreground)',
     },
