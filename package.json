@@ -13,10 +13,10 @@
   "main": "./out/extension.js",
   "browser": "./out/web-extension.js",
   "scripts": {
-    "vscode:prepublish": "pnpm run build",
+    "vscode:prepublish": "pnpm run build --minify",
     "build": "node scripts/build",
     "compile": "pnpm run build",
-    "watch": "pnpm run build -watch",
+    "watch": "pnpm run build --watch",
     "pretest": "pnpm run build && pnpm run lint",
     "serve": "serve -C",
     "lint": "eslint .",

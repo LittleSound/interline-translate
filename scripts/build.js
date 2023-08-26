@@ -21,16 +21,25 @@ function build({ platform = 'node', outfile = 'out/extension.js' }) {
     platform,
     define: { 'process.env.NODE_ENV': '"production"' },
     minify: process.argv.includes('--minify'),
-  // watch: process.argv.includes('--watch'),
+    // watch: process.argv.includes('--watch'),
   })
 }
 
-sh(`cp "${join(__filename, '../../node_modules/vscode-oniguruma/release/onig.wasm')}" "${join(__filename, '../../out/oniguruma.wasm')}" `)
-build({
-  platform: 'node',
-  outfile: 'out/extension.js',
-})
-build({
-  platform: 'browser',
-  outfile: 'out/web-extension.js',
+async function main() {
+  await Promise.all([
+    sh(`cp "${join(__filename, '../../node_modules/vscode-oniguruma/release/onig.wasm')}" "${join(__filename, '../../out/oniguruma.wasm')}" `),
+    build({
+      platform: 'node',
+      outfile: 'out/extension.js',
+    }),
+    build({
+      platform: 'browser',
+      outfile: 'out/web-extension.js',
+    }),
+  ])
+}
+
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
 })
