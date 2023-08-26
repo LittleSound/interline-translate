@@ -202,6 +202,7 @@ export const StringScopes = [
   'punctuation.definition.string',
   'constant.character.escape',
   'text.html.derivative', // TODO: HTML needs separate optimization
+  'string.regexp', // TODO: regexp needs separate optimization
 ] as const
 export function isString(character: number, tokensOfLine: IToken[]) {
   return !!findScopes(character, tokensOfLine, StringScopes)
