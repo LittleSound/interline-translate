@@ -1,15 +1,16 @@
-import { Range, commands, languages, window, workspace } from 'vscode'
+import { Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, ref } from '@vue/reactivity'
 import { onConfigUpdated } from '~/config'
 import { REGEX_FIND_PHRASES } from '~/regex'
-import { GapLinesTextDecoration, PlaceholderCodeLensProvider } from '~/view/Interline'
+import { GapLinesTextDecoration } from '~/view/Interline'
 import type { DecorationMatch } from '~/types'
 import { useTranslationCache } from '~/model/cache'
 import type { Context } from '~/context'
 import { translateDocument, useTranslationMeta } from '~/model/translator'
 import { useExtensionContext } from '~/dependence/extensionContext'
 import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
+import { usePlaceholderCodeLensProvider } from '~/view/codeLens'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -25,7 +26,7 @@ export function RegisterTranslator(ctx: Context) {
   let decorations: DecorationMatch[] = []
   let editor: TextEditor | undefined
 
-  const placeholderCodeLens = new PlaceholderCodeLensProvider([])
+  const placeholderCodeLens = usePlaceholderCodeLensProvider()
 
   const regex = REGEX_FIND_PHRASES
 
@@ -108,7 +109,7 @@ export function RegisterTranslator(ctx: Context) {
 
     if (displayOriginalText.value) {
       editor.setDecorations(beTranslatedTextDecoration, [])
-      placeholderCodeLens.putRangeList = []
+      placeholderCodeLens.clean(editor.document)
       return
     }
 
@@ -121,8 +122,7 @@ export function RegisterTranslator(ctx: Context) {
         .map(({ range }) => range.end.line + 1),
     )
 
-    placeholderCodeLens.putRangeList = Array.from(nextLineList)
-      .map(line => editor!.document.lineAt(line).range)
+    placeholderCodeLens.add(editor.document, Array.from(nextLineList))
   }
 
   async function translateImmediately() {
@@ -160,8 +160,6 @@ export function RegisterTranslator(ctx: Context) {
     editor = _editor
     decorations = []
   }
-
-  languages.registerCodeLensProvider({ scheme: 'file' }, placeholderCodeLens)
 
   window.onDidChangeActiveTextEditor((e) => {
     triggerTranslateDocument(e)

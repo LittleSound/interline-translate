@@ -1,5 +1,6 @@
-import type { CancellationToken, CodeLensProvider, ProviderResult, Range, TextDocument, TextEditor } from 'vscode'
-import { CodeLens, languages, window } from 'vscode'
+import type { Range, TextEditor } from 'vscode'
+import { window } from 'vscode'
+import { usePlaceholderCodeLensProvider } from './codeLens'
 import { config } from '~/config'
 
 function helloWorldDecoration(text: string, {
@@ -23,35 +24,10 @@ export interface DisplayOnGapLinesOption {
 export function displayOnGapLines(editor: TextEditor, options: DisplayOnGapLinesOption[]) {
   const nextLineList: Set<number> = new Set(options.filter(({ range }) => editor.document.lineCount > range.end.line).map(({ range }) => range.end.line + 1))
 
-  languages.registerCodeLensProvider(
-    { scheme: 'file' },
-    new HelloWorldCodeLensProvider(
-      Array.from(nextLineList).map(line => editor.document.lineAt(line).range),
-    ),
-  )
+  usePlaceholderCodeLensProvider().add(editor.document, Array.from(nextLineList))
 
   options.forEach((option) => {
     const { range, text, character = 0 } = option
     editor.setDecorations(helloWorldDecoration(text, { character }), [range])
   })
-}
-
-export class HelloWorldCodeLensProvider implements CodeLensProvider {
-  putRangeList: Range[] = []
-
-  constructor(putRangeList: Range[]) {
-    this.putRangeList = putRangeList
-  }
-
-  provideCodeLenses(document: TextDocument, token: CancellationToken): ProviderResult<CodeLens[]> {
-    const codeLens: CodeLens[] = []
-    this.putRangeList.forEach((range) => {
-      codeLens.push(new CodeLens(range, {
-        title: ' ',
-        command: '',
-        arguments: [document],
-      }))
-    })
-    return codeLens
-  }
 }
