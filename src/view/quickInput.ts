@@ -15,11 +15,11 @@ export function showTranslatePopmenu() {
       kind: QuickPickItemKind.Separator,
     },
     {
-      label: '$(symbol-keyword) Target:',
+      label: '$(globe) Target:',
       description: 'Chinese (Simplified)',
     },
     {
-      label: '$(bracket) Source:',
+      label: '$(file-code) Source:',
       description: 'English',
     },
     {
