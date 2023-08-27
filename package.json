@@ -61,6 +61,10 @@
       {
         "command": "sidecar-translate.translateTheDocumentOnce",
         "title": "translate the document once"
+      },
+      {
+        "command": "sidecar-translate.showTranslatePopmenu",
+        "title": "Interline Translate"
       }
     ],
     "configuration": {

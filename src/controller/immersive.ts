@@ -11,6 +11,7 @@ import { translateDocument, useTranslationMeta } from '~/model/translator'
 import { useExtensionContext } from '~/dependence/extensionContext'
 import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 import { usePlaceholderCodeLensProvider } from '~/view/codeLens'
+import { showTranslatePopmenu } from '~/view/quickInput'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -213,5 +214,9 @@ export function RegisterTranslator(ctx: Context) {
   extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.displayOriginalText', () => {
     enableContinuousTranslationOnce.value = false
     displayOriginalText.value = true
+  }))
+
+  extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.showTranslatePopmenu', () => {
+    showTranslatePopmenu()
   }))
 }
