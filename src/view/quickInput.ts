@@ -41,6 +41,9 @@ export function showTranslatePopmenu() {
       case quickPick.items[3].label:
         showSetLanguagePopmenu('source')
         break
+      case quickPick.items[4].label:
+        showSetTranslationService()
+        break
     }
   })
   quickPick.onDidHide(() => quickPick.dispose())
@@ -74,6 +77,41 @@ export function showSetLanguagePopmenu(type: 'target' | 'source') {
       label: 'Korean',
       description: 'ko',
     },
+  ]
+
+  quickPick.onDidChangeSelection((selection) => {
+    window.showInformationMessage(`Selected language: ${selection[0].label}`)
+    showTranslatePopmenu()
+  })
+
+  quickPick.buttons = [
+    QuickInputButtons.Back,
+  ]
+  quickPick.onDidTriggerButton((button) => {
+    if (button === QuickInputButtons.Back)
+      showTranslatePopmenu()
+  })
+
+  quickPick.onDidHide(() => quickPick.dispose())
+  quickPick.show()
+}
+
+export function showSetTranslationService() {
+  const quickPick = window.createQuickPick()
+  quickPick.title = 'Translation Service'
+  quickPick.items = [
+    {
+      label: 'Google Translate',
+      description: 'Powered by Google Translate',
+    },
+    {
+      label: 'Baidu Translate',
+      description: 'Powered by Baidu Translate',
+    },
+    {
+      label: 'Youdao Translate',
+      description: 'Powered by Youdao Translate',
+    },
     {
       label: 'More...',
       description: 'Install more translate sources from Extensions Marketplace',
@@ -81,7 +119,7 @@ export function showSetLanguagePopmenu(type: 'target' | 'source') {
   ]
 
   quickPick.onDidChangeSelection((selection) => {
-    window.showInformationMessage(`Selected language: ${selection[0].label}`)
+    window.showInformationMessage(`Selected service: ${selection[0].label}`)
     showTranslatePopmenu()
   })
 
