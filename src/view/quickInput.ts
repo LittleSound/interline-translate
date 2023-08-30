@@ -1,14 +1,17 @@
-import { QuickInputButtons, QuickPickItemKind, commands, window } from 'vscode'
+import type { QuickPick, QuickPickItem } from 'vscode'
+import { QuickInputButtons, QuickPickItemKind, window } from 'vscode'
+import type { Fn } from '~/types'
 
 export function showTranslatePopmenu() {
   const quickPick = window.createQuickPick()
   quickPick.title = 'Interline Translate'
-  quickPick.items = [
+  defineQuickPickItems(quickPick, [
     {
       alwaysShow: true,
       picked: true,
       label: '$(run-all) Translate',
       detail: 'Start translating documents',
+      callback: () => window.showInformationMessage('Start translating documents'),
     },
     {
       label: 'Options',
@@ -17,35 +20,19 @@ export function showTranslatePopmenu() {
     {
       label: '$(globe) Target:',
       description: 'Chinese (Simplified)',
+      callback: () => showSetLanguagePopmenu('target'),
     },
     {
       label: '$(file-code) Source:',
       description: 'English',
+      callback: () => showSetLanguagePopmenu('source'),
     },
     {
       label: '$(cloud) Service:',
       description: 'Google Translate',
+      callback: () => showSetTranslationService(),
     },
-  ]
-  quickPick.onDidChangeSelection((selection) => {
-    const label = selection[0].label
-
-    switch (label) {
-      case quickPick.items[0].label:
-        commands.executeCommand('sidecar-translate.startTranslatingDocuments')
-        quickPick.hide()
-        break
-      case quickPick.items[2].label:
-        showSetLanguagePopmenu('target')
-        break
-      case quickPick.items[3].label:
-        showSetLanguagePopmenu('source')
-        break
-      case quickPick.items[4].label:
-        showSetTranslationService()
-        break
-    }
-  })
+  ])
   quickPick.onDidHide(() => quickPick.dispose())
   quickPick.show()
 }
@@ -133,4 +120,25 @@ export function showSetTranslationService() {
 
   quickPick.onDidHide(() => quickPick.dispose())
   quickPick.show()
+}
+
+function defineQuickPickItems<I extends QuickPickItem, Q extends QuickPick<QuickPickItem>>(quickPick: Q, items: (I & { callback?: Fn })[]) {
+  const map = new Map<string, Fn>()
+  const _items: QuickPickItem[] = []
+  for (const index in items) {
+    const item = items[index]
+    const { callback, ...others } = item
+    if (callback)
+      map.set(item.label, callback)
+    _items[index] = others
+  }
+
+  quickPick.items = _items
+
+  quickPick.onDidChangeSelection((selection) => {
+    const label = selection[0].label
+    const callback = map.get(label)
+    if (callback)
+      callback()
+  })
 }
