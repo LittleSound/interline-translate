@@ -1,5 +1,5 @@
 import type { QuickPick, QuickPickItem } from 'vscode'
-import { QuickInputButtons, QuickPickItemKind, window } from 'vscode'
+import { QuickInputButtons, QuickPickItemKind, commands, window } from 'vscode'
 import type { Fn } from '~/types'
 
 export function showTranslatePopmenu() {
@@ -11,7 +11,7 @@ export function showTranslatePopmenu() {
       picked: true,
       label: '$(run-all) Translate',
       detail: 'Start translating documents',
-      callback: () => window.showInformationMessage('Start translating documents'),
+      callback: () => commands.executeCommand('sidecar-translate.startTranslatingDocuments'),
     },
     {
       label: 'Options',

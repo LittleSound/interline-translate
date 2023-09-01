@@ -3,6 +3,7 @@
 import type * as vscode from 'vscode'
 import { useExtensionContext } from './dependence/extensionContext'
 import { RegisterControllers } from './controller'
+import { registerEntryButton } from './view/statusBar'
 import { createContext } from '~/context'
 import { RegisterGrammar } from '~/model/grammar'
 import { registerConfig } from '~/config'
@@ -20,6 +21,7 @@ export async function activate(extCtx: vscode.ExtensionContext) {
   registerConfig(ctx)
   await RegisterGrammar(ctx)
   RegisterControllers(ctx)
+  registerEntryButton()
 }
 
 // This method is called when your extension is deactivated
