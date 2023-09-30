@@ -1,6 +1,31 @@
 import type { QuickPick, QuickPickItem } from 'vscode'
 import { QuickInputButtons, QuickPickItemKind, commands, window } from 'vscode'
+import { config } from '~/config'
 import type { Fn } from '~/types'
+
+// @TODO: move to config
+const languageOptions: QuickPickItem[] = [
+  {
+    label: 'Chinese (Simplified)',
+    description: 'zh-CN',
+  },
+  {
+    label: 'Chinese (Traditional)',
+    description: 'zh-TW',
+  },
+  {
+    label: 'English',
+    description: 'en',
+  },
+  {
+    label: 'Japanese',
+    description: 'ja',
+  },
+  {
+    label: 'Korean',
+    description: 'ko',
+  },
+]
 
 export function showTranslatePopmenu() {
   const quickPick = window.createQuickPick()
@@ -19,7 +44,7 @@ export function showTranslatePopmenu() {
     },
     {
       label: '$(globe) Target:',
-      description: 'Chinese (Simplified)',
+      description: languageOptions.find(item => item.description === config.defaultTargetLanguage)?.label,
       callback: () => showSetLanguagePopmenu('target'),
     },
     {
@@ -43,31 +68,24 @@ export function showSetLanguagePopmenu(type: 'target' | 'source') {
     ? 'Target Language'
     : 'Source Language'
 
-  quickPick.items = [
-    {
-      label: 'Chinese (Simplified)',
-      description: 'zh-CN',
-    },
-    {
-      label: 'Chinese (Traditional)',
-      description: 'zh-TW',
-    },
-    {
-      label: 'English',
-      description: 'en',
-    },
-    {
-      label: 'Japanese',
-      description: 'ja',
-    },
-    {
-      label: 'Korean',
-      description: 'ko',
-    },
-  ]
+  quickPick.items = languageOptions.map((item) => {
+    const isCurrent = item.description === config.defaultTargetLanguage
+    return {
+      ...item,
+      label: `${isCurrent ? '$(check) ' : '$(array) '}${item.label}`,
+    }
+  })
 
   quickPick.onDidChangeSelection((selection) => {
     window.showInformationMessage(`Selected language: ${selection[0].label}`)
+    const selectedLanguage = selection[0].description
+    if (!selectedLanguage) {
+      window.showErrorMessage('Invalid language')
+      return
+    }
+
+    config.defaultTargetLanguage = selectedLanguage
+
     showTranslatePopmenu()
   })
 
