@@ -68,8 +68,12 @@ export function showSetLanguagePopmenu(type: 'target' | 'source') {
     ? 'Target Language'
     : 'Source Language'
 
+  const currentLang = type === 'target'
+    ? config.defaultTargetLanguage
+    : 'en'
+
   quickPick.items = languageOptions.map((item) => {
-    const isCurrent = item.description === config.defaultTargetLanguage
+    const isCurrent = item.description === currentLang
     return {
       ...item,
       label: `${isCurrent ? '$(check) ' : '$(array) '}${item.label}`,
@@ -77,7 +81,7 @@ export function showSetLanguagePopmenu(type: 'target' | 'source') {
   })
 
   quickPick.onDidChangeSelection((selection) => {
-    window.showInformationMessage(`Selected ${type} language: ${selection[0].label}`)
+    window.showInformationMessage(`Selected ${type} language: ${selection[0].label.split(') ')[1]}`)
     const selectedLanguage = selection[0].description
     if (!selectedLanguage) {
       window.showErrorMessage('Invalid language')
