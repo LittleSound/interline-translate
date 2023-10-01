@@ -77,14 +77,20 @@ export function showSetLanguagePopmenu(type: 'target' | 'source') {
   })
 
   quickPick.onDidChangeSelection((selection) => {
-    window.showInformationMessage(`Selected language: ${selection[0].label}`)
+    window.showInformationMessage(`Selected ${type} language: ${selection[0].label}`)
     const selectedLanguage = selection[0].description
     if (!selectedLanguage) {
       window.showErrorMessage('Invalid language')
       return
     }
 
-    config.defaultTargetLanguage = selectedLanguage
+    if (type === 'target') {
+      config.defaultTargetLanguage = selectedLanguage
+    }
+    else {
+      // @TODO: set source language
+      window.showErrorMessage('Not implemented')
+    }
 
     showTranslatePopmenu()
   })
