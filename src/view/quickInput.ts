@@ -31,12 +31,21 @@ export function showTranslatePopmenu() {
   const quickPick = window.createQuickPick()
   quickPick.title = 'Interline Translate'
   defineQuickPickItems(quickPick, [
+    // Start
     {
       alwaysShow: true,
       picked: true,
       label: '$(run-all) Translate',
       detail: 'Start translating documents',
       callback: () => commands.executeCommand('sidecar-translate.startTranslatingDocuments'),
+    },
+    // Stop
+    {
+      alwaysShow: true,
+      picked: true,
+      label: '$(stop-circle) Stop',
+      detail: 'Stop translating documents',
+      callback: () => commands.executeCommand('sidecar-translate.stopTranslatingDocuments'),
     },
     {
       label: 'Options',
