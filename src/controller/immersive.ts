@@ -22,7 +22,7 @@ export function RegisterTranslator(ctx: Context) {
 
   const enableContinuousTranslation = ref(false)
   const enableContinuousTranslationOnce = ref(false)
-  const displayOriginalText = ref(false)
+  const displayOriginalText = ref(true)
 
   let decorations: DecorationMatch[] = []
   let editor: TextEditor | undefined
@@ -206,6 +206,7 @@ export function RegisterTranslator(ctx: Context) {
   }))
   extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.stopTranslatingDocuments', () => {
     enableContinuousTranslation.value = false
+    displayOriginalText.value = true
   }))
   extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.translateTheDocumentOnce', () => {
     displayOriginalText.value = false
