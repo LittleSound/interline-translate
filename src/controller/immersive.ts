@@ -225,6 +225,6 @@ export function RegisterTranslator(ctx: Context) {
   }))
 
   extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.showTranslatePopmenu', () => {
-    showTranslatePopmenu()
+    showTranslatePopmenu(ctx)
   }))
 }

@@ -1,6 +1,8 @@
 import type { QuickPick, QuickPickItem } from 'vscode'
 import { QuickInputButtons, QuickPickItemKind, commands, window } from 'vscode'
 import { config } from '~/config'
+import type { Context } from '~/context'
+import { useStore } from '~/store'
 import type { Fn } from '~/types'
 
 // @TODO: move to config
@@ -27,26 +29,27 @@ const languageOptions: QuickPickItem[] = [
   },
 ]
 
-export function showTranslatePopmenu() {
+export function showTranslatePopmenu(ctx: Context) {
+  const store = useStore(ctx)
+
   const quickPick = window.createQuickPick()
   quickPick.title = 'Interline Translate'
   defineQuickPickItems(quickPick, [
-    // Start
-    {
-      alwaysShow: true,
-      picked: true,
-      label: '$(run-all) Translate',
-      detail: 'Start translating documents',
-      callback: () => commands.executeCommand('sidecar-translate.startTranslatingDocuments'),
-    },
-    // Stop
-    {
-      alwaysShow: true,
-      picked: true,
-      label: '$(stop-circle) Stop',
-      detail: 'Stop translating documents',
-      callback: () => commands.executeCommand('sidecar-translate.stopTranslatingDocuments'),
-    },
+    store.enableContinuousTranslation || store.enableContinuousTranslationOnce
+      ? { // Stop
+          alwaysShow: true,
+          picked: true,
+          label: '$(stop-circle) Stop',
+          detail: 'Stop translating documents',
+          callback: () => commands.executeCommand('sidecar-translate.stopTranslatingDocuments').then(() => quickPick.dispose()),
+        }
+      : { // Start
+          alwaysShow: true,
+          picked: true,
+          label: '$(run-all) Translate',
+          detail: 'Start translating documents',
+          callback: () => commands.executeCommand('sidecar-translate.startTranslatingDocuments').then(() => quickPick.dispose()),
+        },
     {
       label: 'Options',
       kind: QuickPickItemKind.Separator,
@@ -54,24 +57,24 @@ export function showTranslatePopmenu() {
     {
       label: '$(globe) Target:',
       description: languageOptions.find(item => item.description === config.defaultTargetLanguage)?.label,
-      callback: () => showSetLanguagePopmenu('target'),
+      callback: () => showSetLanguagePopmenu(ctx, 'target'),
     },
     {
       label: '$(file-code) Source:',
       description: 'English',
-      callback: () => showSetLanguagePopmenu('source'),
+      callback: () => showSetLanguagePopmenu(ctx, 'source'),
     },
     {
       label: '$(cloud) Service:',
       description: 'Google Translate',
-      callback: () => showSetTranslationService(),
+      callback: () => showSetTranslationService(ctx),
     },
   ])
   quickPick.onDidHide(() => quickPick.dispose())
   quickPick.show()
 }
 
-export function showSetLanguagePopmenu(type: 'target' | 'source') {
+export function showSetLanguagePopmenu(ctx: Context, type: 'target' | 'source') {
   const quickPick = window.createQuickPick()
   quickPick.title = type === 'target'
     ? 'Target Language'
@@ -105,7 +108,7 @@ export function showSetLanguagePopmenu(type: 'target' | 'source') {
       window.showErrorMessage('Not implemented')
     }
 
-    showTranslatePopmenu()
+    showTranslatePopmenu(ctx)
   })
 
   quickPick.buttons = [
@@ -113,14 +116,14 @@ export function showSetLanguagePopmenu(type: 'target' | 'source') {
   ]
   quickPick.onDidTriggerButton((button) => {
     if (button === QuickInputButtons.Back)
-      showTranslatePopmenu()
+      showTranslatePopmenu(ctx)
   })
 
   quickPick.onDidHide(() => quickPick.dispose())
   quickPick.show()
 }
 
-export function showSetTranslationService() {
+export function showSetTranslationService(ctx: Context) {
   const quickPick = window.createQuickPick()
   quickPick.title = 'Translation Service'
   quickPick.items = [
@@ -144,7 +147,7 @@ export function showSetTranslationService() {
 
   quickPick.onDidChangeSelection((selection) => {
     window.showInformationMessage(`Selected service: ${selection[0].label}`)
-    showTranslatePopmenu()
+    showTranslatePopmenu(ctx)
   })
 
   quickPick.buttons = [
@@ -152,7 +155,7 @@ export function showSetTranslationService() {
   ]
   quickPick.onDidTriggerButton((button) => {
     if (button === QuickInputButtons.Back)
-      showTranslatePopmenu()
+      showTranslatePopmenu(ctx)
   })
 
   quickPick.onDidHide(() => quickPick.dispose())
