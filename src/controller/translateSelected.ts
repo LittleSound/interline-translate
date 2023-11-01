@@ -1,7 +1,7 @@
 import type { Range } from 'vscode'
 import { commands, window } from 'vscode'
 import type { Context } from '~/context'
-import { useExtensionContext } from '~/dependence/extensionContext'
+import { useExtensionContext } from '~/dependence'
 import { useTranslationMeta } from '~/model/translator'
 import { translate } from '~/providers/tranlations/google'
 import { displayOnGapLines } from '~/view'

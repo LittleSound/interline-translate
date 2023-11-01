@@ -2,7 +2,7 @@ import type { WritableComputedRef } from '@vue/reactivity'
 import { computed, reactive, ref } from '@vue/reactivity'
 import { Uri, workspace } from 'vscode'
 import { EXT_NAMESPACE } from './meta'
-import { useExtensionContext } from './dependence/extensionContext'
+import { useExtensionContext } from './dependence'
 import type { Context } from '~/context'
 
 const _configState = ref(0)

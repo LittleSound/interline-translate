@@ -34,11 +34,11 @@ export function createContext(proto?: Context) {
   return context
 }
 
-export function defineDependency<T>(name: string = 'Unknown') {
+export function defineDependency<T>(debugLabel: string = 'Unknown'): UseDependency<T> {
   const useDependency: UseDependency<T> = (ctx: Context) => {
     const dependency = ctx.find(useDependency as any) as any
     if (dependency === undefined)
-      throw new Error(`Dependency not found: ${name}`)
+      throw new Error(`Dependency not found: ${debugLabel}`)
     return dependency
   }
   const provide = (ctx: Context, dep: T) => {

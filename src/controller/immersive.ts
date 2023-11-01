@@ -1,6 +1,6 @@
 import { Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
-import { effect, ref } from '@vue/reactivity'
+import { effect, toRefs } from '@vue/reactivity'
 import { onConfigUpdated } from '~/config'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { GapLinesTextDecoration } from '~/view/Interline'
@@ -8,10 +8,11 @@ import type { DecorationMatch } from '~/types'
 import { useTranslationCache } from '~/model/cache'
 import type { Context } from '~/context'
 import { translateDocument, useTranslationMeta } from '~/model/translator'
-import { useExtensionContext } from '~/dependence/extensionContext'
+import { useExtensionContext } from '~/dependence'
 import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 import { usePlaceholderCodeLensProvider } from '~/view/codeLens'
 import { showTranslatePopmenu } from '~/view/quickInput'
+import { useStore } from '~/store'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -20,9 +21,13 @@ export function RegisterTranslator(ctx: Context) {
     textDecoration: 'none;',
   })
 
-  const enableContinuousTranslation = ref(false)
-  const enableContinuousTranslationOnce = ref(false)
-  const displayOriginalText = ref(true)
+  const store = useStore(ctx)
+  const {
+    enableContinuousTranslation,
+    enableContinuousTranslationOnce,
+    displayOriginalText,
+    callingTranslateService,
+  } = toRefs(store)
 
   let decorations: DecorationMatch[] = []
   let editor: TextEditor | undefined
@@ -134,12 +139,14 @@ export function RegisterTranslator(ctx: Context) {
       return
     enableContinuousTranslationOnce.value = false
 
+    callingTranslateService.value = true
+
     const meta = useTranslationMeta()
     await translateDocument({
       textDocument: editor!.document,
       from: meta.from,
       to: meta.to,
-    })
+    }).finally(() => callingTranslateService.value = false)
     updateDecorations()
   }
 
