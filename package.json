@@ -22,6 +22,7 @@
     "pretest": "pnpm run build && pnpm run lint",
     "serve": "serve -C",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
