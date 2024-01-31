@@ -33,7 +33,6 @@
     "@types/vscode": "^1.85.0",
     "@vscode/test-electron": "^2.3.9",
     "@vue/reactivity": "^3.4.15",
-    "axios": "^1.6.7",
     "esbuild": "^0.18.20",
     "eslint": "^8.56.0",
     "glob": "^8.1.0",
