@@ -30,7 +30,7 @@
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "20.2.5",
-    "@types/vscode": "^1.85.0",
+    "@types/vscode": "^1.86.0",
     "@vscode/test-electron": "^2.3.9",
     "@vue/reactivity": "^3.4.15",
     "esbuild": "^0.18.20",
