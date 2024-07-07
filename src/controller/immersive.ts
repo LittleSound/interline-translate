@@ -207,24 +207,24 @@ export function RegisterTranslator(ctx: Context) {
       refreshDecorations()
   })
 
-  extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.startTranslatingDocuments', () => {
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.startTranslatingDocuments', () => {
     displayOriginalText.value = false
     enableContinuousTranslation.value = true
   }))
-  extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.stopTranslatingDocuments', () => {
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.stopTranslatingDocuments', () => {
     enableContinuousTranslation.value = false
     displayOriginalText.value = true
   }))
-  extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.translateTheDocumentOnce', () => {
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.translateTheDocumentOnce', () => {
     displayOriginalText.value = false
     enableContinuousTranslationOnce.value = true
   }))
-  extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.displayOriginalText', () => {
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.displayOriginalText', () => {
     enableContinuousTranslationOnce.value = false
     displayOriginalText.value = true
   }))
 
-  extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.showTranslatePopmenu', () => {
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.showTranslatePopmenu', () => {
     showTranslatePopmenu(ctx)
   }))
 }

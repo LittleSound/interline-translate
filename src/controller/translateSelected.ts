@@ -10,7 +10,7 @@ export function RegisterTranslateSelectedText(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
 
   // Translate selected text
-  extCtx.subscriptions.push(commands.registerCommand('sidecar-translate.translateSelectedText', async () => {
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.translateSelectedText', async () => {
     const activeEditor = window.activeTextEditor
     if (!activeEditor)
       return

@@ -41,14 +41,14 @@ export function showTranslatePopmenu(ctx: Context) {
           picked: true,
           label: '$(stop-circle) Stop',
           detail: 'Stop translating documents',
-          callback: () => commands.executeCommand('sidecar-translate.stopTranslatingDocuments').then(() => quickPick.dispose()),
+          callback: () => commands.executeCommand('interline-translate.stopTranslatingDocuments').then(() => quickPick.dispose()),
         }
       : { // Start
           alwaysShow: true,
           picked: true,
           label: '$(run-all) Translate',
           detail: 'Start translating documents',
-          callback: () => commands.executeCommand('sidecar-translate.startTranslatingDocuments').then(() => quickPick.dispose()),
+          callback: () => commands.executeCommand('interline-translate.startTranslatingDocuments').then(() => quickPick.dispose()),
         },
     {
       label: 'Options',

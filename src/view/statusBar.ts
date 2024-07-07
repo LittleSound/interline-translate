@@ -16,7 +16,7 @@ export function registerEntryButton(ctx: Context) {
         ? '$(sync~spin) Translating'
         : '$(pass) translated'
       : '$(run-all) Translate'
-    entryButton.command = 'sidecar-translate.showTranslatePopmenu'
+    entryButton.command = 'interline-translate.showTranslatePopmenu'
     entryButton.show()
   })
 }

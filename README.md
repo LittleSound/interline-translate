@@ -1,6 +1,6 @@
-# sidecar-translate README
+# interline-translate README
 
-This is the README for your extension "sidecar-translate". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "interline-translate". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 

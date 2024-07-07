@@ -1,10 +1,11 @@
 {
-  "name": "sidecar-translate",
-  "displayName": "Sidecar Translate",
+  "name": "interline-translate",
+  "displayName": "Interline Translation",
+  "publisher": "rzmu",
   "description": "",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.89.0"
   },
   "categories": [
     "Other"
@@ -45,27 +46,27 @@
   "contributes": {
     "commands": [
       {
-        "command": "sidecar-translate.translateSelectedText",
+        "command": "interline-translate.translateSelectedText",
         "title": "Translate Selected Text"
       },
       {
-        "command": "sidecar-translate.startTranslatingDocuments",
+        "command": "interline-translate.startTranslatingDocuments",
         "title": "Start translating documents"
       },
       {
-        "command": "sidecar-translate.stopTranslatingDocuments",
+        "command": "interline-translate.stopTranslatingDocuments",
         "title": "Stop translating documents"
       },
       {
-        "command": "sidecar-translate.displayOriginalText",
+        "command": "interline-translate.displayOriginalText",
         "title": "Display original text"
       },
       {
-        "command": "sidecar-translate.translateTheDocumentOnce",
+        "command": "interline-translate.translateTheDocumentOnce",
         "title": "translate the document once"
       },
       {
-        "command": "sidecar-translate.showTranslatePopmenu",
+        "command": "interline-translate.showTranslatePopmenu",
         "title": "Interline Translate"
       }
     ],
@@ -73,22 +74,22 @@
       "type": "object",
       "title": "Sidecar Translate",
       "properties": {
-        "sidecar-translate.defaultTargetLanguage": {
+        "interline-translate.defaultTargetLanguage": {
           "type": "string",
           "default": "zh-CN",
           "description": "Default target language to translate to."
         },
-        "sidecar-translate.secondLanguage": {
+        "interline-translate.secondLanguage": {
           "type": "string",
           "default": "",
           "description": "Fallback language when the default language is not available."
         },
-        "sidecar-translate.googleTranslateProxy": {
+        "interline-translate.googleTranslateProxy": {
           "type": "string",
           "default": "",
           "description": "Google translate proxy to use for requests. Leave empty to use the official API Url."
         },
-        "sidecar-translate.corsProxy": {
+        "interline-translate.corsProxy": {
           "type": "string",
           "default": "",
           "description": "CORS proxy to use for requests. Leave empty to use the default proxy."
