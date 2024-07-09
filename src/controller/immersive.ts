@@ -122,7 +122,7 @@ export function RegisterTranslator(ctx: Context) {
         .map(({ range }) => range.end.line + 1),
     )
 
-    placeholderCodeLens.add(editor.document, Array.from(nextLineList))
+    placeholderCodeLens.set(editor.document, Array.from(nextLineList))
   }
 
   async function translateImmediately() {
