@@ -1,7 +1,7 @@
 import { Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, toRefs } from '@vue/reactivity'
-import { onConfigUpdated } from '~/config'
+import { isExcluded, onConfigUpdated } from '~/config'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { GapLinesTextDecoration } from '~/view/Interline'
 import type { DecorationMatch } from '~/types'
@@ -61,6 +61,8 @@ export function RegisterTranslator(ctx: Context) {
     while ((match = regex.exec(text))) {
       const key = match[0]
       if (!key)
+        continue
+      if (isExcluded(key))
         continue
       const translatedText = translationCache.get(key)
       if (!translatedText)
@@ -205,6 +207,10 @@ export function RegisterTranslator(ctx: Context) {
   effect(() => {
     if (displayOriginalText.value)
       refreshDecorations()
+  })
+
+  onConfigUpdated(() => {
+    updateDecorations()
   })
 
   extCtx.subscriptions.push(commands.registerCommand('interline-translate.startTranslatingDocuments', () => {

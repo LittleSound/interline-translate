@@ -3,7 +3,7 @@ import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isS
 import { useTranslationCache } from '~/model/cache'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { translate } from '~/providers/tranlations/google'
-import { config } from '~/config'
+import { config, isExcluded } from '~/config'
 
 export function useTranslationMeta() {
   // TODO: use config or automatically recognize from language
@@ -50,6 +50,13 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
     if (translationCache.has(phrases))
       continue
 
+    // Deduplicate
+    if (phrasesFromDoc.includes(phrases))
+      continue
+
+    if (isExcluded(phrases))
+      continue
+
     const startPos = textDocument.positionAt(match.index)
 
     if (isComment(startPos.character, tokens[startPos.line])) {
@@ -90,6 +97,7 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
     phrasesFromDoc.push(phrases)
   }
 
+  console.log('phrasesFromDoc:', phrasesFromDoc)
   console.log('skip comments:', commentsFromDoc)
   console.log('skip strings:', stringsFromDoc)
 

@@ -95,6 +95,18 @@
           "type": "string",
           "default": "",
           "description": "CORS proxy to use for requests. Leave empty to use the default proxy."
+        },
+        "interline-translate.minWordLength": {
+          "type": "number",
+          "default": 4,
+          "description": "Minimum word length to translate."
+        },
+        "interline-translate.knownWords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
         }
       }
     }

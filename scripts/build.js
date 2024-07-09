@@ -1,6 +1,6 @@
 const process = require('node:process')
-const { join, resolve } = require('node:path')
-const { sh } = require('./utils/sh')
+const { resolve } = require('node:path')
+const fs = require('node:fs/promises')
 
 function build({ platform = 'node', outfile = 'out/extension.js' }) {
   return require('esbuild').build({
@@ -26,8 +26,12 @@ function build({ platform = 'node', outfile = 'out/extension.js' }) {
 }
 
 async function main() {
+  await fs.mkdir('out', { recursive: true })
   await Promise.all([
-    sh(`cp "${join(__filename, '../../node_modules/vscode-oniguruma/release/onig.wasm')}" "${join(__filename, '../../out/oniguruma.wasm')}" `),
+    fs.cp(
+      resolve(__filename, '../../node_modules/vscode-oniguruma/release/onig.wasm'),
+      resolve(__filename, '../../out/onig.wasm'),
+    ),
     build({
       platform: 'node',
       outfile: 'out/extension.js',
