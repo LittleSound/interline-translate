@@ -24,7 +24,7 @@ export interface DisplayOnGapLinesOption {
 export function displayOnGapLines(editor: TextEditor, options: DisplayOnGapLinesOption[]) {
   const nextLineList: Set<number> = new Set(options.filter(({ range }) => editor.document.lineCount > range.end.line).map(({ range }) => range.end.line + 1))
 
-  usePlaceholderCodeLensProvider().add(editor.document, Array.from(nextLineList))
+  usePlaceholderCodeLensProvider().set(editor.document, Array.from(nextLineList))
 
   options.forEach((option) => {
     const { range, text, character = 0 } = option

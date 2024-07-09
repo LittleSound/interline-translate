@@ -37,7 +37,7 @@ function refresh() {
   instance.changeCodeLensesEmitter.fire()
 }
 
-function add(document: TextDocument, rangeList: number[]) {
+function set(document: TextDocument, rangeList: number[]) {
   const uri = document.uri.toString()
   let lines = instance.linesOfDoc.get(uri)
   if (!lines) {
@@ -48,6 +48,13 @@ function add(document: TextDocument, rangeList: number[]) {
   rangeList.forEach((line) => {
     lines!.add(line)
   })
+
+  // Remove lines that are not in the rangeList
+  lines.forEach((line) => {
+    if (!rangeList.includes(line))
+      lines!.delete(line)
+  })
+
   refresh()
 }
 
@@ -70,7 +77,7 @@ export function usePlaceholderCodeLensProvider() {
 
   return {
     refresh,
-    add,
+    set,
     clean,
     cleanAll,
   }
