@@ -55,8 +55,10 @@ export function RegisterTranslator(ctx: Context) {
 
     const tokens = await parseDocumentToTokens({ textDocument: editor.document })
 
-    for (const { phrase, match } of extractPhrases(text)) {
-      const translatedText = translationCache.get(phrase)
+    for (const { phrase, match, translated } of extractPhrases(text)) {
+      const translatedText = translated
+        ? phrase
+        : translationCache.get(phrase)
       if (!translatedText)
         continue
 
