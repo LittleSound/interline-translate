@@ -4,7 +4,10 @@
   "publisher": "rzmu",
   "description": "",
   "version": "0.0.4",
-  "repository": "https://github.com/LittleSound/interline-translate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LittleSound/interline-translate.git"
+  },
   "icon": "assets/logo.png",
   "engines": {
     "vscode": "^1.89.0"

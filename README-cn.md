@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="124px" height="124px" src="https://raw.githubusercontent.com/LittleSound/interline-translate/main/assets/logo.png" />
+  <img width="124px" height="124px" src="./assets/logo.png" />
 </p>
 
 简体中文｜[English](https://github.com/LittleSound/interline-translate#readme)
@@ -17,7 +17,7 @@ Interline Translate 是一个 VSCode 扩展，它的功能是在 VSCode 中提�
 - 轻松配置和自定义翻译选项。
 
 <p align="center">
-  <img height="300px" src="https://raw.githubusercontent.com/LittleSound/interline-translate/main/assets/interline-demo.gif" />
+  <img height="300px" src="./assets/interline-demo.gif" />
 </p>
 
 ## Requirements
