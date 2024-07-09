@@ -3,7 +3,7 @@
   "displayName": "Interline Translate",
   "publisher": "rzmu",
   "description": "",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LittleSound/interline-translate.git"
@@ -32,7 +32,8 @@
     "serve": "serve -C",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "publish": "vsce publish --no-dependencies "
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
