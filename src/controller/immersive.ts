@@ -1,6 +1,7 @@
 import { Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, toRefs } from '@vue/reactivity'
+import { split as varnameSplit } from 'varname'
 import { onConfigUpdated } from '~/config'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { GapLinesTextDecoration } from '~/view/Interline'
@@ -59,9 +60,10 @@ export function RegisterTranslator(ctx: Context) {
 
     // eslint-disable-next-line no-cond-assign
     while ((match = regex.exec(text))) {
-      const key = match[0]
+      let key = match[0]
       if (!key)
         continue
+      key = varnameSplit(key).join(' ')
       const translatedText = translationCache.get(key)
       if (!translatedText)
         continue
