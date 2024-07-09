@@ -1,8 +1,7 @@
 import { type TextDocument, window } from 'vscode'
-import { split as varnameSplit } from 'varname'
+import { extractPhrases } from './extract'
 import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 import { useTranslationCache } from '~/model/cache'
-import { REGEX_FIND_PHRASES } from '~/regex'
 import { translate } from '~/providers/tranlations/google'
 import { config } from '~/config'
 
@@ -31,10 +30,6 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
 
   const tokens = await parseDocumentToTokens({ textDocument })
 
-  const regex = REGEX_FIND_PHRASES
-  let match: RegExpExecArray | null
-  regex.lastIndex = 0
-
   // const phrasesFromDoc = Array.from(new Set(text.match(regex) || []))
   //   .filter(phrase => !translationCache.has(phrase))
 
@@ -42,15 +37,12 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
   const commentsFromDoc: string[] = []
   const stringsFromDoc: string[] = []
 
-  // eslint-disable-next-line no-cond-assign
-  while ((match = regex.exec(fullText))) {
-    let phrases = match[0]
-    if (!phrases)
+  for (const { match, phrase, regex } of extractPhrases(fullText)) {
+    if (translationCache.has(phrase))
       continue
 
-    phrases = varnameSplit(phrases).join(' ')
-
-    if (translationCache.has(phrases))
+    // Deduplicate
+    if (phrasesFromDoc.includes(phrase))
       continue
 
     const startPos = textDocument.positionAt(match.index)
@@ -90,9 +82,10 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
     if (isKeyword(startPos.character, tokens[startPos.line]))
       continue
 
-    phrasesFromDoc.push(phrases)
+    phrasesFromDoc.push(phrase)
   }
 
+  console.log('phrasesFromDoc:', phrasesFromDoc)
   console.log('skip comments:', commentsFromDoc)
   console.log('skip strings:', stringsFromDoc)
 

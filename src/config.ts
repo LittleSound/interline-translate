@@ -1,11 +1,11 @@
 import type { WritableComputedRef } from '@vue/reactivity'
-import { computed, reactive, ref } from '@vue/reactivity'
+import { computed, reactive, ref, shallowRef } from '@vue/reactivity'
 import { Uri, workspace } from 'vscode'
 import { EXT_NAMESPACE } from './meta'
 import { useExtensionContext } from './dependence'
 import type { Context } from '~/context'
 
-const _configState = ref(0)
+const _configLastUpdated = ref(0)
 
 function getConfig<T = any>(key: string): T | undefined {
   return workspace
@@ -21,14 +21,16 @@ async function setConfig(key: string, value: any, isGlobal = true) {
 }
 
 function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true): WritableComputedRef<T> {
-  const state = ref<T | undefined>(defaultValue)
+  const state = shallowRef<T | undefined>(getConfig<T>(key) ?? defaultValue)
+  let lastTimestamp = _configLastUpdated.value
 
   return computed<T>({
     get: () => {
-      // to force computed update
-      // eslint-disable-next-line no-unused-expressions
-      _configState.value
-      return state.value as T ?? getConfig<T>(key) ?? defaultValue
+      if (lastTimestamp !== _configLastUpdated.value) {
+        state.value = getConfig<T>(key) ?? defaultValue
+        lastTimestamp = _configLastUpdated.value
+      }
+      return state.value
     },
     set: (v: any) => {
       state.value = v as any
@@ -38,7 +40,7 @@ function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true): Writ
 }
 
 export function onConfigUpdated() {
-  _configState.value = Date.now()
+  _configLastUpdated.value = Date.now()
 }
 
 export const config = reactive({
@@ -54,7 +56,26 @@ export const config = reactive({
   textSize: 0.9,
 
   extensionUri: Uri.file(''),
+
+  minWordLength: createConfigRef(`${EXT_NAMESPACE}.minWordLength`, 4, false),
+
+  knownWords: createConfigRef<string[]>(`${EXT_NAMESPACE}.knownWords`, [], false),
 })
+
+export function isKnownWords(word: string) {
+  return config.knownWords.includes(word.replace(/[^\w\._-]/g, ''))
+}
+
+export function isPhraseExcluded(phrase: string) {
+  if (phrase.length < config.minWordLength)
+    return true
+  if (isKnownWords(phrase))
+    return true
+  // Skip phrase that contains no alphabet characters
+  if (!phrase.match(/[a-zA-Z]/))
+    return true
+  return false
+}
 
 export function registerConfig(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
