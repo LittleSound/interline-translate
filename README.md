@@ -1,71 +1,34 @@
-# interline-translate README
+# Interline Translate
 
-This is the README for your extension "interline-translate". After writing up a brief description, we recommend including the following sections.
+Interline Translate is a VSCode extension that provides code variable name translation within VSCode. The translated text is displayed below the variable name, which is the origin of its name, Interline Translate.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+<!-- Tip: Using animations to showcase your extension is a great way to engage users. We recommend short, focused animations to make it easier for users to follow. -->
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- Automatically translates variable names in the code and displays the translated text below them.
+- Supports multiple programming languages and translation languages.
+- Easy to configure and customize translation options.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+This extension requires the following dependencies:
+
+- A corresponding translation API (e.g., Google Translate API) must be installed and configured.
+- An internet connection is required to access the translation services.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+This extension provides the following settings:
 
-For example:
+* `interline-translate.translateSelectedText`: Open the translation control panel.
+* `interline-translate.startTranslatingDocuments`: Quickly start translating.
 
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+<!-- ## Known Issues -->
+<!-- List known issues here to help users avoid submitting duplicate issues. -->
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Initial release. Implemented basic code variable name translation functionality.
