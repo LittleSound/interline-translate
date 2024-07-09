@@ -15,7 +15,7 @@ Interline Translate is a VSCode extension that provides code variable name trans
 - Easy to configure and customize translation options.
 
 <p align="center">
-<img width="124px" height="124px" src="https://raw.githubusercontent.com/LittleSound/interline-translate/main/assets/interline-demo.png" />
+<img height="300px" src="https://raw.githubusercontent.com/LittleSound/interline-translate/main/assets/interline-demo.gif" />
 </p>
 
 ## Requirements
