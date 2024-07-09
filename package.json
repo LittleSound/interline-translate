@@ -56,6 +56,10 @@
         "title": "Translate Selected Text"
       },
       {
+        "command": "interline-translate.toggleTranslatingDocuments",
+        "title": "Toggle translating documents"
+      },
+      {
         "command": "interline-translate.startTranslatingDocuments",
         "title": "Start translating documents"
       },

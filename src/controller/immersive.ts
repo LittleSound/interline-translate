@@ -131,6 +131,7 @@ export function RegisterTranslator(ctx: Context) {
 
     if (displayOriginalText.value || (!enableContinuousTranslation.value && !enableContinuousTranslationOnce.value))
       return
+
     enableContinuousTranslationOnce.value = false
 
     callingTranslateService.value = true
@@ -208,6 +209,10 @@ export function RegisterTranslator(ctx: Context) {
   extCtx.subscriptions.push(commands.registerCommand('interline-translate.stopTranslatingDocuments', () => {
     enableContinuousTranslation.value = false
     displayOriginalText.value = true
+  }))
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.toggleTranslatingDocuments', () => {
+    enableContinuousTranslation.value = !enableContinuousTranslation.value
+    displayOriginalText.value = !enableContinuousTranslation.value
   }))
   extCtx.subscriptions.push(commands.registerCommand('interline-translate.translateTheDocumentOnce', () => {
     displayOriginalText.value = false
