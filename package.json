@@ -76,8 +76,8 @@
         "title": "Interline Translate"
       },
       {
-        "command": "interline-translate.clearCache",
-        "title": "Clear cache"
+        "command": "interline-translate.clearTranslationCache",
+        "title": "Clear translation cache"
       }
     ],
     "configuration": {

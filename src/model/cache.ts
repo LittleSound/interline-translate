@@ -26,7 +26,7 @@ export function persistTranslationCache(ctx: Context) {
     ext.globalState.update(`translations-${languagePair}`, [...tc.entries()])
 }
 
-export function clearCache(ctx: Context) {
+export function clearTranslationCache(ctx: Context) {
   const ext = useExtensionContext(ctx)
   translationCacheMap.clear()
   ext.globalState.keys()
