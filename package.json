@@ -3,8 +3,9 @@
   "displayName": "Interline Translation",
   "publisher": "rzmu",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": "https://github.com/LittleSound/interline-translate",
+  "icon": "logo.png",
   "engines": {
     "vscode": "^1.89.0"
   },
