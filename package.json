@@ -1,12 +1,15 @@
 {
   "name": "interline-translate",
-  "displayName": "Interline Translation",
+  "displayName": "Interline Translate",
   "publisher": "rzmu",
   "description": "",
   "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LittleSound/interline-translate.git"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/LittleSound"
   },
   "icon": "assets/logo.png",
   "engines": {

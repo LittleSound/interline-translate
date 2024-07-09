@@ -45,6 +45,19 @@ This extension provides the following settings:
 <!-- ## Known Issues -->
 <!-- List known issues here to help users avoid submitting duplicate issues. -->
 
+## Support Me
+
+If you like this project, you can support me in the following ways:
+
+- [☕️ Sponsor](https://github.com/sponsors/LittleSound)
+- [⭐️ Give this project a Star](https://github.com/LittleSound/interline-translate)
+- Share with your friends
+
+## Other Translation Plugin
+
+- [Comment Translate](https://marketplace.visualstudio.com/items?itemName=intellsmi.comment-translate) - Translate comments or strings
+- [Immersive Translate](https://immersivetranslate.com/) - Translate text on web pages
+
 ## Release Notes
 
 ### 0.0.1
