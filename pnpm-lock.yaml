@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 devDependencies:
   '@antfu/eslint-config':
     specifier: ^0.39.8
@@ -44,6 +40,9 @@ devDependencies:
   typescript:
     specifier: ^5.4.5
     version: 5.4.5
+  varname:
+    specifier: ^6.2.0
+    version: 6.2.0
   vscode-oniguruma:
     specifier: ^1.7.0
     version: 1.7.0
@@ -2569,6 +2568,11 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
+  /varname@6.2.0:
+    resolution: {integrity: sha512-9Ilb9T+b87zV5wsFDAqNmpWbssAYx5hI5GSPdLxn521uF0w4JiBk90UwmIIG3rbHd7TjEErG7xTNm54eEzFz3Q==}
+    engines: {node: 18.x || 20.x || 22.x}
+    dev: true
+
   /vscode-oniguruma@1.7.0:
     resolution: {integrity: sha512-L9WMGRfrjOhgHSdOYgCt/yRMsXzLDJSL7BPrOZt73gU0iWO4mpqzqQzOz5srxqTvMBaR0XZTSrVWo4j55Rc6cA==}
     dev: true
@@ -2686,3 +2690,7 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false

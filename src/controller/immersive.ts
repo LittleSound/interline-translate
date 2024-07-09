@@ -1,6 +1,7 @@
 import { Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, toRefs } from '@vue/reactivity'
+import { split as varnameSplit } from 'varname'
 import { isExcluded, onConfigUpdated } from '~/config'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { GapLinesTextDecoration } from '~/view/Interline'
@@ -59,11 +60,21 @@ export function RegisterTranslator(ctx: Context) {
 
     // eslint-disable-next-line no-cond-assign
     while ((match = regex.exec(text))) {
-      const key = match[0]
+      let key = match[0]
       if (!key)
         continue
+
       if (isExcluded(key))
         continue
+
+      // Split variable name into parts
+      const nameParts = varnameSplit(key)
+      // If all parts are excluded, skip this key
+      if (nameParts.every(part => isExcluded(part)))
+        continue
+      // Join the parts back as a sentence
+      key = nameParts.join(' ')
+
       const translatedText = translationCache.get(key)
       if (!translatedText)
         continue
@@ -207,10 +218,6 @@ export function RegisterTranslator(ctx: Context) {
   effect(() => {
     if (displayOriginalText.value)
       refreshDecorations()
-  })
-
-  onConfigUpdated(() => {
-    updateDecorations()
   })
 
   extCtx.subscriptions.push(commands.registerCommand('interline-translate.startTranslatingDocuments', () => {

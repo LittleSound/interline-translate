@@ -1,4 +1,5 @@
 import { type TextDocument, window } from 'vscode'
+import { split as varnameSplit } from 'varname'
 import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 import { useTranslationCache } from '~/model/cache'
 import { REGEX_FIND_PHRASES } from '~/regex'
@@ -43,9 +44,11 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
 
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(fullText))) {
-    const phrases = match[0]
+    let phrases = match[0]
     if (!phrases)
       continue
+
+    phrases = varnameSplit(phrases).join(' ')
 
     if (translationCache.has(phrases))
       continue
