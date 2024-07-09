@@ -5,7 +5,7 @@ import { onConfigUpdated } from '~/config'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { GapLinesTextDecoration } from '~/view/Interline'
 import type { DecorationMatch } from '~/types'
-import { useTranslationCache } from '~/model/cache'
+import { clearTranslationCache, useTranslationCache } from '~/model/cache'
 import type { Context } from '~/context'
 import { translateDocument, useTranslationMeta } from '~/model/translator'
 import { useExtensionContext } from '~/dependence'
@@ -49,7 +49,7 @@ export function RegisterTranslator(ctx: Context) {
     const text = editor.document.getText()
 
     const meta = useTranslationMeta()
-    const translationCache = useTranslationCache(meta.from, meta.to)
+    const translationCache = useTranslationCache(ctx, meta.from, meta.to)
 
     decorations = []
 
@@ -136,7 +136,7 @@ export function RegisterTranslator(ctx: Context) {
     callingTranslateService.value = true
 
     const meta = useTranslationMeta()
-    await translateDocument({
+    await translateDocument(ctx, {
       textDocument: editor!.document,
       from: meta.from,
       to: meta.to,
@@ -220,5 +220,9 @@ export function RegisterTranslator(ctx: Context) {
 
   extCtx.subscriptions.push(commands.registerCommand('interline-translate.showTranslatePopmenu', () => {
     showTranslatePopmenu(ctx)
+  }))
+
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.clearTranslationCache', () => {
+    clearTranslationCache(ctx)
   }))
 }

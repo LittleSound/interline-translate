@@ -1,9 +1,11 @@
-import { type TextDocument, window } from 'vscode'
+import { window } from 'vscode'
+import type { TextDocument } from 'vscode'
 import { extractPhrases } from './extract'
 import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
-import { useTranslationCache } from '~/model/cache'
+import { persistTranslationCache, useTranslationCache } from '~/model/cache'
 import { translate } from '~/providers/tranlations/google'
 import { config } from '~/config'
+import type { Context } from '~/context'
 
 export function useTranslationMeta() {
   // TODO: use config or automatically recognize from language
@@ -21,10 +23,10 @@ export interface TranslateDocumentOptions {
   textDocument: TextDocument
 }
 
-export async function translateDocument(options: TranslateDocumentOptions): Promise<Error | undefined> {
+export async function translateDocument(ctx: Context, options: TranslateDocumentOptions): Promise<Error | undefined> {
   const { textDocument, from, to } = options
 
-  const translationCache = useTranslationCache(from, to)
+  const translationCache = useTranslationCache(ctx, from, to)
 
   const fullText = textDocument.getText()
 
@@ -113,4 +115,6 @@ export async function translateDocument(options: TranslateDocumentOptions): Prom
     if (tp)
       translationCache.set(phrase, tp)
   })
+
+  persistTranslationCache(ctx)
 }
