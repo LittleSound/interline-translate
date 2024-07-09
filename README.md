@@ -20,6 +20,14 @@ Interline Translate is a VSCode extension that provides code variable name trans
   <img height="300px" src="./assets/interline-demo.gif" />
 </p>
 
+<p align="center">
+  <img height="100px" src="./assets/status-bar-buttons.png" />
+</p>
+
+- You can use the buttons on the status bar to control the translation function.
+- Click the secondary button next to it for detailed settings.
+- Or you can open the command palette with the shortcut `Ctrl+Shift+P` and enter `Interline Translate` to use the extension's features.
+
 ## Requirements
 
 This extension requires the following dependencies:

@@ -20,6 +20,14 @@ Interline Translate 是一个 VSCode 扩展，它的功能是在 VSCode 中提�
   <img height="300px" src="./assets/interline-demo.gif" />
 </p>
 
+<p align="center">
+  <img height="100px" src="./assets/status-bar-buttons.png" />
+</p>
+
+- 您可以使用状态栏上的按钮来控制翻译功能。
+- 点击旁边的次要按钮进行详细设置。
+- 或者您可以使用快捷键 `Ctrl+Shift+P` 打开命令面板并输入 `Interline Translate` 来使用扩展功能。
+
 ## Requirements
 
 此扩展需要以下依赖项：
