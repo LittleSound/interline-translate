@@ -48,6 +48,7 @@
     "glob": "^8.1.0",
     "mocha": "^10.4.0",
     "ofetch": "^1.3.4",
+    "popular-english-words": "^1.0.2",
     "typescript": "^5.4.5",
     "varname": "^6.2.0",
     "vscode-oniguruma": "^1.7.0",
@@ -86,6 +87,10 @@
       {
         "command": "interline-translate.clearTranslationCache",
         "title": "Clear translation cache"
+      },
+      {
+        "command": "interline-translate.showDebugReport",
+        "title": "Show debug report"
       }
     ],
     "configuration": {
@@ -129,7 +134,13 @@
           "items": {
             "type": "string"
           },
-          "default": {}
+          "default": {},
+          "description": "Custom translations for specific terms."
+        },
+        "interline-translate.knownPopularWordCount": {
+          "type": "number",
+          "default": 0,
+          "description": "Amount of the the most popular words skipped from translation."
         }
       }
     }

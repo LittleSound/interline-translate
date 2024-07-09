@@ -4,6 +4,8 @@ import { Uri, workspace } from 'vscode'
 import { EXT_NAMESPACE } from './meta'
 import { useExtensionContext } from './dependence'
 import type { Context } from '~/context'
+// @ts-expect-error missing types
+import { words as popularWords } from 'popular-english-words'
 
 const _configLastUpdated = ref(0)
 
@@ -24,13 +26,8 @@ function createConfigRef<T>(
   key: string,
   defaultValue: T,
   isGlobal = true,
-  transform?: (v: T) => T,
 ): WritableComputedRef<T> {
-  function getValue() {
-    const value = getConfig<T>(key) ?? defaultValue
-    return transform ? transform(value) : value
-  }
-
+  const getValue = () => getConfig<T>(key) ?? defaultValue
   const state = shallowRef<T | undefined>(getValue())
   let lastTimestamp = _configLastUpdated.value
 
@@ -69,13 +66,20 @@ export const config = reactive({
 
   minWordLength: createConfigRef(`${EXT_NAMESPACE}.minWordLength`, 4),
 
-  knownWords: createConfigRef<string[]>(`${EXT_NAMESPACE}.knownWords`, [], undefined, v => v.map(w => w.toLowerCase())),
+  knownWords: createConfigRef<string[]>(`${EXT_NAMESPACE}.knownWords`, []),
+
+  knownPopularWordCount: createConfigRef<number>(`${EXT_NAMESPACE}.knownPopularWordCount`, 0),
 
   customTranslations: createConfigRef<{ [key: string]: string }>(`${EXT_NAMESPACE}.customTranslations`, {}),
 })
 
+export const knownWords = computed(() => [
+  ...config.knownWords.map(w => w.toLowerCase()),
+  ...popularWords.getMostPopular(config.knownPopularWordCount)
+])
+
 export function isKnownWords(word: string) {
-  return config.knownWords.includes(word.toLowerCase().replace(/[^\w\._-]/g, ''))
+  return knownWords.value.includes(word.toLowerCase().replace(/[^\w\._-]/g, ''))
 }
 
 export function isPhraseExcluded(phrase: string) {

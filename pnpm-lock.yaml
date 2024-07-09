@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 devDependencies:
   '@antfu/eslint-config':
     specifier: ^0.39.8
@@ -37,6 +41,9 @@ devDependencies:
   ofetch:
     specifier: ^1.3.4
     version: 1.3.4
+  popular-english-words:
+    specifier: ^1.0.2
+    version: 1.0.2
   typescript:
     specifier: ^5.4.5
     version: 5.4.5
@@ -2215,6 +2222,10 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
+  /popular-english-words@1.0.2:
+    resolution: {integrity: sha512-vQiCBURYdNZP8yIvNQ76fOP5PKUs3tbv1LbQz5hbOVtK6deE8WBkJSYhn1asOqXIiT/iwrQvrwEfNsVrFuk7mw==}
+    dev: true
+
   /postcss-selector-parser@6.0.16:
     resolution: {integrity: sha512-A0RVJrX+IUkVZbW3ClroRWurercFhieevHB38sr2+l9eUClMqome3LmEmnhlNy+5Mr2EYN6B2Kaw9wYdd+VHiw==}
     engines: {node: '>=4'}
@@ -2690,7 +2701,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
