@@ -122,6 +122,13 @@
             "type": "string"
           },
           "default": []
+        },
+        "interline-translate.customTranslations": {
+          "type": "object",
+          "items": {
+            "type": "string"
+          },
+          "default": {}
         }
       }
     }

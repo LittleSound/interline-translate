@@ -70,6 +70,8 @@ export const config = reactive({
   minWordLength: createConfigRef(`${EXT_NAMESPACE}.minWordLength`, 4),
 
   knownWords: createConfigRef<string[]>(`${EXT_NAMESPACE}.knownWords`, [], undefined, v => v.map(w => w.toLowerCase())),
+
+  customTranslations: createConfigRef<{ [key: string]: string }>(`${EXT_NAMESPACE}.customTranslations`, {}),
 })
 
 export function isKnownWords(word: string) {

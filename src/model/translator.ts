@@ -39,7 +39,9 @@ export async function translateDocument(ctx: Context, options: TranslateDocument
   const commentsFromDoc: string[] = []
   const stringsFromDoc: string[] = []
 
-  for (const { match, phrase, regex } of extractPhrases(fullText)) {
+  for (const { match, phrase, regex, translated } of extractPhrases(fullText)) {
+    if (translated)
+      continue
     if (translationCache.has(phrase))
       continue
 
