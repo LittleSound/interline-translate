@@ -1,8 +1,7 @@
 import { Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, toRefs } from '@vue/reactivity'
-import { split as varnameSplit } from 'varname'
-import { isExcluded, onConfigUpdated } from '~/config'
+import { onConfigUpdated } from '~/config'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { GapLinesTextDecoration } from '~/view/Interline'
 import type { DecorationMatch } from '~/types'
@@ -14,6 +13,7 @@ import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isS
 import { usePlaceholderCodeLensProvider } from '~/view/codeLens'
 import { showTranslatePopmenu } from '~/view/quickInput'
 import { useStore } from '~/store'
+import { extractPhrases } from '~/model/extract'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -53,34 +53,15 @@ export function RegisterTranslator(ctx: Context) {
 
     decorations = []
 
-    let match: RegExpExecArray | null
-    regex.lastIndex = 0
-
     const tokens = await parseDocumentToTokens({ textDocument: editor.document })
 
-    // eslint-disable-next-line no-cond-assign
-    while ((match = regex.exec(text))) {
-      let key = match[0]
-      if (!key)
-        continue
-
-      if (isExcluded(key))
-        continue
-
-      // Split variable name into parts
-      const nameParts = varnameSplit(key)
-      // If all parts are excluded, skip this key
-      if (nameParts.every(part => isExcluded(part)))
-        continue
-      // Join the parts back as a sentence
-      key = nameParts.join(' ')
-
-      const translatedText = translationCache.get(key)
+    for (const { phrase, match } of extractPhrases(text)) {
+      const translatedText = translationCache.get(phrase)
       if (!translatedText)
         continue
 
       const startPos = editor.document.positionAt(match.index)
-      const endPos = editor.document.positionAt(match.index + key.length)
+      const endPos = editor.document.positionAt(match.index + phrase.length)
       const range = new Range(startPos, endPos)
 
       if (isComment(startPos.character, tokens[startPos.line])) {
@@ -113,7 +94,7 @@ export function RegisterTranslator(ctx: Context) {
         continue
 
       decorations.push({
-        key,
+        key: phrase,
         range,
         renderOptions: GapLinesTextDecoration(translatedText),
       })

@@ -66,7 +66,7 @@ export function isKnownWords(word: string) {
   return config.knownWords.includes(word.replace(/[^\w\._-]/g, ''))
 }
 
-export function isExcluded(phrase: string) {
+export function isPhraseExcluded(phrase: string) {
   if (phrase.length < config.minWordLength)
     return true
   if (isKnownWords(phrase))
