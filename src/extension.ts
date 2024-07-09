@@ -17,10 +17,10 @@ export async function activate(extCtx: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "interline-translate" is now active!')
 
   const ctx = createContext()
+  useExtensionContext.provide(ctx, extCtx)
 
   registerStore(ctx)
 
-  useExtensionContext.provide(ctx, extCtx)
   registerConfig(ctx)
   await RegisterGrammar(ctx)
   RegisterControllers(ctx)
