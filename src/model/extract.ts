@@ -19,7 +19,7 @@ export function *extractPhrases(text: string) {
     // Split variable name into parts
     const nameParts = varnameSplit(phrase)
     // If all parts are excluded, skip this key
-    if (nameParts.every(part => isPhraseExcluded(part)))
+    if (nameParts.length > 1 && nameParts.every(part => isPhraseExcluded(part)))
       continue
     // Join the parts back as a sentence
     phrase = nameParts.join(' ')

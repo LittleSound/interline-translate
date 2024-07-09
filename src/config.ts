@@ -20,14 +20,24 @@ async function setConfig(key: string, value: any, isGlobal = true) {
     .update(key, value, isGlobal)
 }
 
-function createConfigRef<T>(key: string, defaultValue: T, isGlobal = true): WritableComputedRef<T> {
-  const state = shallowRef<T | undefined>(getConfig<T>(key) ?? defaultValue)
+function createConfigRef<T>(
+  key: string,
+  defaultValue: T,
+  isGlobal = true,
+  transform?: (v: T) => T,
+): WritableComputedRef<T> {
+  function getValue() {
+    const value = getConfig<T>(key) ?? defaultValue
+    return transform ? transform(value) : value
+  }
+
+  const state = shallowRef<T | undefined>(getValue())
   let lastTimestamp = _configLastUpdated.value
 
   return computed<T>({
     get: () => {
       if (lastTimestamp !== _configLastUpdated.value) {
-        state.value = getConfig<T>(key) ?? defaultValue
+        state.value = getValue()
         lastTimestamp = _configLastUpdated.value
       }
       return state.value
@@ -57,13 +67,13 @@ export const config = reactive({
 
   extensionUri: Uri.file(''),
 
-  minWordLength: createConfigRef(`${EXT_NAMESPACE}.minWordLength`, 4, false),
+  minWordLength: createConfigRef(`${EXT_NAMESPACE}.minWordLength`, 4),
 
-  knownWords: createConfigRef<string[]>(`${EXT_NAMESPACE}.knownWords`, [], false),
+  knownWords: createConfigRef<string[]>(`${EXT_NAMESPACE}.knownWords`, [], undefined, v => v.map(w => w.toLowerCase())),
 })
 
 export function isKnownWords(word: string) {
-  return config.knownWords.includes(word.replace(/[^\w\._-]/g, ''))
+  return config.knownWords.includes(word.toLowerCase().replace(/[^\w\._-]/g, ''))
 }
 
 export function isPhraseExcluded(phrase: string) {
