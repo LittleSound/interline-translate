@@ -42,3 +42,9 @@ This extension provides the following settings:
 ### 0.0.1
 
 Initial release. Implemented basic code variable name translation functionality.
+
+
+### 0.1.0
+
+- feat: add configs to skip translations for some words ([#4](https://github.com/LittleSound/interline-translate/pull/4))
+- feat: format multi-word variables
