@@ -74,6 +74,10 @@
       {
         "command": "interline-translate.showTranslatePopmenu",
         "title": "Interline Translate"
+      },
+      {
+        "command": "interline-translate.clearCache",
+        "title": "Clear cache"
       }
     ],
     "configuration": {
