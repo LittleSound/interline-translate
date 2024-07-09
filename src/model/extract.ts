@@ -37,6 +37,7 @@ export function *extractPhrases(text: string) {
     nameParts = nameParts.map(part => config.customTranslations[part.toLowerCase()] || part)
 
     // Join the parts back as a sentence
+    // TODO distinguish whether the language uses spaces to separate words.
     phrase = nameParts.join(translated ? '' : ' ')
 
     yield {
