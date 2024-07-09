@@ -1,4 +1,4 @@
-import { Range, commands, window, workspace } from 'vscode'
+import { MarkdownString, Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, toRefs } from '@vue/reactivity'
 import { onConfigUpdated } from '~/config'
@@ -14,6 +14,7 @@ import { usePlaceholderCodeLensProvider } from '~/view/codeLens'
 import { showTranslatePopmenu } from '~/view/quickInput'
 import { useStore } from '~/store'
 import { extractPhrases } from '~/model/extract'
+import { EXT_NAMESPACE } from '~/meta'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -93,10 +94,19 @@ export function RegisterTranslator(ctx: Context) {
       if (isKeyword(startPos.character, tokens[startPos.line]))
         continue
 
+      const markdown = new MarkdownString([
+        `$(globe) ${phrase} → ${translatedText}`,
+        '',
+        `[Mark as known](command:interline-translate.markKnownPhrase?${encodeURIComponent(JSON.stringify([phrase]))})`,
+      ].join('\n'))
+      markdown.isTrusted = true
+      markdown.supportThemeIcons = true
+
       decorations.push({
         key: phrase,
         range,
         renderOptions: GapLinesTextDecoration(translatedText),
+        hoverMessage: markdown,
       })
     }
 
@@ -224,5 +234,16 @@ export function RegisterTranslator(ctx: Context) {
 
   extCtx.subscriptions.push(commands.registerCommand('interline-translate.clearTranslationCache', () => {
     clearTranslationCache(ctx)
+  }))
+
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.markKnownPhrase', async (phrase: string) => {
+    const configs = workspace.getConfiguration(EXT_NAMESPACE)
+    const words = configs.get<string[]>('knownWords', [])
+    const parts = phrase.split(' ')
+    for (const part of parts) {
+      if (!words.includes(part))
+        words.push(part)
+    }
+    await configs.update('knownWords', words, true)
   }))
 }
