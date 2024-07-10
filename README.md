@@ -60,20 +60,4 @@ If you like this project, you can support me in the following ways:
 
 ## Release Notes
 
-### 0.2.0
-
-* fix: remove empty codelens ([#5](https://github.com/LittleSound/interline-translate/pull/5))
-* feat: persist translate cache ([#6](https://github.com/LittleSound/interline-translate/pull/6))
-* feat: one click status bar toggle ([#7](https://github.com/LittleSound/interline-translate/pull/7))
-* feat: normalize `knownWords` to lower case ([#8](https://github.com/LittleSound/interline-translate/pull/8))
-* feat: custom translations ([#9](https://github.com/LittleSound/interline-translate/pull/9))
-* feat: hover to mark as known ([#10](https://github.com/LittleSound/interline-translate/pull/10))
-
-### 0.1.0
-
-* feat: add configs to skip translations for some words ([#4](https://github.com/LittleSound/interline-translate/pull/4))
-* feat: format multi-word variables
-
-### 0.0.1
-
-* initial release. Implemented basic code variable name translation functionality.
+[Interline Translate Releases](https://github.com/LittleSound/interline-translate/releases)
