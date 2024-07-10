@@ -1,7 +1,7 @@
 import { MarkdownString, Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, toRefs } from '@vue/reactivity'
-import { onConfigUpdated } from '~/config'
+import { knownWords, onConfigUpdated } from '~/config'
 import { REGEX_FIND_PHRASES } from '~/regex'
 import { GapLinesTextDecoration } from '~/view/Interline'
 import type { DecorationMatch } from '~/types'
@@ -252,5 +252,18 @@ export function RegisterTranslator(ctx: Context) {
         words.push(part)
     }
     await configs.update('knownWords', words, true)
+  }))
+
+  extCtx.subscriptions.push(commands.registerCommand('interline-translate.showDebugReport', async () => {
+    const data = {
+      knownWords: knownWords.value,
+    }
+
+    const doc = await workspace.openTextDocument({
+      content: JSON.stringify(data, null, 2),
+      language: 'json',
+    })
+
+    await window.showTextDocument(doc)
   }))
 }
