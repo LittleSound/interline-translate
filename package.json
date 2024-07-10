@@ -99,7 +99,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Sidecar Translate",
+      "title": "Interline Translate",
       "properties": {
         "interline-translate.defaultTargetLanguage": {
           "type": "string",
