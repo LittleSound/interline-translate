@@ -111,9 +111,14 @@ export async function translate(options: GoogleTranslationParameters): Promise<T
   }
   catch (e) {
     if (e instanceof FetchError) {
+      let message = '[Interline Translate] Google / Http Request Error'
+      if (e.status)
+        message = `\nHttp Status: ${e.status}\n${JSON.stringify(e.data)}`
+      message += '\nCheck your network connection or choose another translation provider'
+
       return {
         ok: false,
-        message: `Http Request Error\nHttp Status: ${e.status}\n${JSON.stringify(e.data)}`,
+        message,
         originalError: e,
       }
     }

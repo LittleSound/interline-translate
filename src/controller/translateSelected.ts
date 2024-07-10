@@ -30,6 +30,7 @@ export function RegisterTranslateSelectedText(ctx: Context) {
     })
 
     if (!res.ok) {
+      console.error(res, res.originalError)
       window.showErrorMessage(res.message)
       return
     }
