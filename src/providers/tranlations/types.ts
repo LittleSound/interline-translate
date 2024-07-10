@@ -16,3 +16,9 @@ export interface TranslationParameters {
   from: string
   to: string
 }
+
+export interface TranslationProviderInfo {
+  name: string
+  supportLanguage: Record<string, string | undefined>
+  needs: { config_key: string; place_hold: string }[]
+}

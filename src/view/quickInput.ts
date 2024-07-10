@@ -1,33 +1,10 @@
 import type { QuickPick, QuickPickItem } from 'vscode'
 import { QuickInputButtons, QuickPickItemKind, commands, window } from 'vscode'
-import { config } from '~/config'
+import { config, languageOptions } from '~/config'
 import type { Context } from '~/context'
 import { useStore } from '~/store'
 import type { Fn } from '~/types'
-
-// @TODO: move to config
-const languageOptions: QuickPickItem[] = [
-  {
-    label: 'Chinese (Simplified)',
-    description: 'zh-CN',
-  },
-  {
-    label: 'Chinese (Traditional)',
-    description: 'zh-TW',
-  },
-  {
-    label: 'English',
-    description: 'en',
-  },
-  {
-    label: 'Japanese',
-    description: 'ja',
-  },
-  {
-    label: 'Korean',
-    description: 'ko',
-  },
-]
+import { supportLanguage } from '~/providers/tranlations'
 
 export function showTranslatePopmenu(ctx: Context) {
   const store = useStore(ctx)
@@ -76,6 +53,8 @@ export function showTranslatePopmenu(ctx: Context) {
 
 export function showSetLanguagePopmenu(ctx: Context, type: 'target' | 'source') {
   const quickPick = window.createQuickPick()
+  quickPick.matchOnDescription = true
+
   quickPick.title = type === 'target'
     ? 'Target Language'
     : 'Source Language'
@@ -84,13 +63,18 @@ export function showSetLanguagePopmenu(ctx: Context, type: 'target' | 'source') 
     ? config.defaultTargetLanguage
     : 'en'
 
-  quickPick.items = languageOptions.map((item) => {
-    const isCurrent = item.description === currentLang
-    return {
-      ...item,
-      label: `${isCurrent ? '$(check) ' : '$(array) '}${item.label}`,
-    }
-  })
+  quickPick.items = languageOptions
+    .filter(item => type === 'target'
+      ? supportLanguage.google[item.description!]
+      : item.description === 'en',
+    )
+    .map((item) => {
+      const isCurrent = item.description === currentLang
+      return {
+        ...item,
+        label: `${isCurrent ? '$(check) ' : '$(array) '}${item.label}`,
+      }
+    })
 
   quickPick.onDidChangeSelection((selection) => {
     window.showInformationMessage(`Selected ${type} language: ${selection[0].label.split(') ')[1]}`)
@@ -126,24 +110,28 @@ export function showSetLanguagePopmenu(ctx: Context, type: 'target' | 'source') 
 export function showSetTranslationService(ctx: Context) {
   const quickPick = window.createQuickPick()
   quickPick.title = 'Translation Service'
-  quickPick.items = [
+  quickPick.matchOnDescription = true
+  quickPick.matchOnDetail = true
+  defineQuickPickItems(quickPick, [
     {
+      key: 'google',
       label: 'Google Translate',
       description: 'Powered by Google Translate',
     },
-    {
-      label: 'Baidu Translate',
-      description: 'Powered by Baidu Translate',
-    },
-    {
-      label: 'Youdao Translate',
-      description: 'Powered by Youdao Translate',
-    },
-    {
-      label: 'More...',
-      description: 'Install more translate sources from Extensions Marketplace',
-    },
-  ]
+    // TODO add more translation services
+    // {
+    //   label: 'Baidu Translate',
+    //   description: 'Powered by Baidu Translate',
+    // },
+    // {
+    //   label: 'Youdao Translate',
+    //   description: 'Powered by Youdao Translate',
+    // },
+    // {
+    //   label: 'More...',
+    //   description: 'Install more translate sources from Extensions Marketplace',
+    // },
+  ])
 
   quickPick.onDidChangeSelection((selection) => {
     window.showInformationMessage(`Selected service: ${selection[0].label}`)
@@ -175,10 +163,12 @@ function defineQuickPickItems<I extends QuickPickItem, Q extends QuickPick<Quick
 
   quickPick.items = _items
 
-  quickPick.onDidChangeSelection((selection) => {
-    const label = selection[0].label
-    const callback = map.get(label)
-    if (callback)
-      callback()
-  })
+  if (map.size) {
+    quickPick.onDidChangeSelection((selection) => {
+      const label = selection[0].label
+      const callback = map.get(label)
+      if (callback)
+        callback()
+    })
+  }
 }

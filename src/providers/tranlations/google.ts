@@ -1,8 +1,9 @@
 import { FetchError, ofetch } from 'ofetch'
-import type { TranslationParameters, TranslationResult } from './types'
+import type { TranslationParameters, TranslationProviderInfo, TranslationResult } from './types'
+import { createUnsupportedLanguageError } from './utils'
 import { config } from '~/config'
 
-export const info = {
+export const info: TranslationProviderInfo = {
   name: 'google',
   // https://cloud.google.com/translate/docs/languages?hl=zh-cn
   supportLanguage: {
@@ -54,13 +55,10 @@ export async function translate(options: GoogleTranslationParameters): Promise<T
     }
   }
 
-  if (!(from in supportLanguage) || !(to in supportLanguage)) {
-    return {
-      ok: false,
-      message: 'Unsupported Language',
-      originalError: null,
-    }
-  }
+  if (!(from in supportLanguage))
+    return createUnsupportedLanguageError('from', from)
+  if (!(to in supportLanguage))
+    return createUnsupportedLanguageError('to', to)
 
   let domain = config.googleTranslateProxy ?? 'translate.google.com'
   if (domain === '')

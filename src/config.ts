@@ -1,6 +1,8 @@
 import type { WritableComputedRef } from '@vue/reactivity'
 import { computed, reactive, ref, shallowRef } from '@vue/reactivity'
+import type { QuickPickItem } from 'vscode'
 import { Uri, workspace } from 'vscode'
+import { all as langCodes } from 'locale-codes'
 
 // @ts-expect-error missing types
 import { words as popularWords } from 'popular-english-words'
@@ -98,3 +100,8 @@ export function registerConfig(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
   config.extensionUri = extCtx.extensionUri
 }
+
+export const languageOptions: QuickPickItem[] = langCodes.map(item => ({
+  label: item.local || item.name,
+  description: item.tag,
+}))
