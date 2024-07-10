@@ -42,7 +42,7 @@ function createConfigRef<T>(
     },
     set: (v: any) => {
       state.value = v as any
-      setConfig(key, v, isGlobal).finally(() => state.value = undefined)
+      setConfig(key, v, isGlobal)
     },
   })
 }
