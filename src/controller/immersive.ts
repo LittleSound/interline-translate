@@ -259,11 +259,11 @@ export function RegisterTranslator(ctx: Context) {
       knownWords: knownWords.value,
     }
 
-    const doc = await  workspace.openTextDocument( {
-      content: JSON.stringify( data, null, 2 ),
-      language: 'json'
+    const doc = await workspace.openTextDocument({
+      content: JSON.stringify(data, null, 2),
+      language: 'json',
     })
 
-    await window.showTextDocument( doc )
+    await window.showTextDocument(doc)
   }))
 }

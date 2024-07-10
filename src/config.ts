@@ -1,11 +1,12 @@
 import type { WritableComputedRef } from '@vue/reactivity'
 import { computed, reactive, ref, shallowRef } from '@vue/reactivity'
 import { Uri, workspace } from 'vscode'
+
+// @ts-expect-error missing types
+import { words as popularWords } from 'popular-english-words'
 import { EXT_NAMESPACE } from './meta'
 import { useExtensionContext } from './dependence'
 import type { Context } from '~/context'
-// @ts-expect-error missing types
-import { words as popularWords } from 'popular-english-words'
 
 const _configLastUpdated = ref(0)
 
@@ -75,7 +76,7 @@ export const config = reactive({
 
 export const knownWords = computed(() => [
   ...config.knownWords.map(w => w.toLowerCase()),
-  ...popularWords.getMostPopular(config.knownPopularWordCount)
+  ...popularWords.getMostPopular(config.knownPopularWordCount),
 ])
 
 export function isKnownWords(word: string) {
