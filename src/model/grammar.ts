@@ -39,6 +39,7 @@ export async function RegisterGrammar(ctx: Context) {
   if (env.remoteName)
     await registerRemoteGrammar(ctx)
 
+  // eslint-disable-next-line no-console
   console.log('grammarExtensions:', grammarExtensions)
 
   grammarExtensions.forEach((grammarExtension) => {
@@ -103,8 +104,6 @@ export function useGrammarRegistry() {
         const str = env.uiKind === UIKind.Web
           ? await arrayBufferToString(res)
           : res.toString()
-
-        // console.log('grammar file:', str)
 
         return parseRawGrammar(str, GrammarUri.fsPath)
       })

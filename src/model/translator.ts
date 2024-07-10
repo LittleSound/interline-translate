@@ -89,8 +89,11 @@ export async function translateDocument(ctx: Context, options: TranslateDocument
     phrasesFromDoc.push(phrase)
   }
 
+  // eslint-disable-next-line no-console
   console.log('phrasesFromDoc:', phrasesFromDoc)
+  // eslint-disable-next-line no-console
   console.log('skip comments:', commentsFromDoc)
+  // eslint-disable-next-line no-console
   console.log('skip strings:', stringsFromDoc)
 
   if (!phrasesFromDoc.length)
