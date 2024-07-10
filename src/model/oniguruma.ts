@@ -3,7 +3,7 @@ import { OnigScanner, OnigString, loadWASM } from 'vscode-oniguruma'
 import { config } from '~/config'
 
 export async function getOnigurumaLib() {
-  const wasmUri = Uri.joinPath(config.extensionUri, './out/oniguruma.wasm')
+  const wasmUri = Uri.joinPath(config.extensionUri, './out/onig.wasm')
 
   const onigWasm = await workspace.fs.readFile(wasmUri)
   const buffer = onigWasm.buffer.slice(onigWasm.byteOffset, onigWasm.byteOffset + onigWasm.byteLength)
