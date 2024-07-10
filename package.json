@@ -21,6 +21,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
+  "packageManager": "pnpm@9.5.0",
   "main": "./out/extension.js",
   "browser": "./out/web-extension.js",
   "scripts": {
