@@ -57,7 +57,7 @@
     "typescript": "^5.4.5",
     "varname": "^6.2.0",
     "vsce": "^2.15.0",
-    "vscode-ext-gen": "^0.0.0",
+    "vscode-ext-gen": "^0.3.1",
     "vscode-oniguruma": "^1.7.0",
     "vscode-textmate": "^9.0.0"
   },
@@ -172,11 +172,6 @@
           "description": "Amount of the the most popular words skipped from translation."
         }
       }
-    }
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "vscode-ext-gen@0.0.0": "patches/vscode-ext-gen@0.0.0.patch"
     }
   }
 }
