@@ -1,5 +1,12 @@
 # Change Log
 
+### 0.4.0
+
+* fix: onig.wasm path by @hyoban in https://github.com/LittleSound/interline-translate/pull/12
+* fix: wrong regex index assignment by @antfu in https://github.com/LittleSound/interline-translate/pull/13
+* feat: do not display hint with untranslated content by @antfu in https://github.com/LittleSound/interline-translate/pull/14
+* feat: use vscode-ext-gen to provide better type safety by @antfu in https://github.com/LittleSound/interline-translate/pull/15
+
 ### 0.3.0
 
 * feat: option to ignore popular words by @antfu in https://github.com/LittleSound/interline-translate/pull/11
