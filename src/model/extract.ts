@@ -3,7 +3,7 @@ import { config, isPhraseExcluded } from '~/config'
 
 export function *extractPhrases(text: string) {
   // Here we create a regex inside the closure to avoid `lastIndex` pollution across iterations
-  const regex = /[\w|-]{2,}/g
+  const regex = /[\w-]{2,}/g
   let match: RegExpExecArray | null
   regex.lastIndex = 0
 
