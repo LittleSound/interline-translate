@@ -8,7 +8,8 @@
     "**/*.d.ts",
     "**/*.json",
     "pkg",
-    "bin"
+    "bin",
+    "src/generated-meta.ts"
   ],
   "rules": {
     "no-console": ["warn", { "allow": ["warn", "error"] }]
