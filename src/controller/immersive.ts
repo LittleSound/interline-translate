@@ -63,6 +63,13 @@ export function RegisterTranslator(ctx: Context) {
       if (!translatedText)
         continue
 
+      // Skip if the translated text is the same as input
+      if (
+        translatedText.toLowerCase() === phrase.toLowerCase()
+        || translatedText.toLowerCase() === match[0].toLowerCase()
+      )
+        continue
+
       const startPos = editor.document.positionAt(match.index)
       const endPos = editor.document.positionAt(match.index + phrase.length)
       const range = new Range(startPos, endPos)
