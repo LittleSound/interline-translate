@@ -6,8 +6,8 @@ import { all as langCodes } from 'locale-codes'
 
 // @ts-expect-error missing types
 import { words as popularWords } from 'popular-english-words'
-import { EXT_NAMESPACE } from './meta'
 import { useExtensionContext } from './dependence'
+import * as meta from './generated-meta'
 import type { Context } from '~/context'
 
 const _configLastUpdated = ref(0)
@@ -53,27 +53,15 @@ export function onConfigUpdated() {
   _configLastUpdated.value = Date.now()
 }
 
+const configRaw = Object.fromEntries(
+  Object.entries(meta.configs)
+    .map(([key, value]) => [key, createConfigRef(value.key, value.default)]),
+) as { [KEY in keyof typeof meta.configs]: WritableComputedRef<meta.ConfigKeyTypeMap[meta.ConfigShorthandMap[KEY]]> }
+
 export const config = reactive({
-  defaultTargetLanguage: createConfigRef(`${EXT_NAMESPACE}.defaultTargetLanguage`, 'zh-CN'),
-  secondLanguage: createConfigRef(`${EXT_NAMESPACE}.secondLanguage`, ''),
-
-  // providers
-  googleTranslateProxy: createConfigRef(`${EXT_NAMESPACE}.googleProxy`, ''),
-
-  /** you can use https://cors-anywhere.herokuapp.com/ at "vscode for web" */
-  corsProxy: createConfigRef(`${EXT_NAMESPACE}.corsProxy`, ''),
-
+  ...configRaw,
   textSize: 0.9,
-
   extensionUri: Uri.file(''),
-
-  minWordLength: createConfigRef(`${EXT_NAMESPACE}.minWordLength`, 4),
-
-  knownWords: createConfigRef<string[]>(`${EXT_NAMESPACE}.knownWords`, []),
-
-  knownPopularWordCount: createConfigRef<number>(`${EXT_NAMESPACE}.knownPopularWordCount`, 0),
-
-  customTranslations: createConfigRef<{ [key: string]: string }>(`${EXT_NAMESPACE}.customTranslations`, {}),
 })
 
 export const knownWords = computed(() => [

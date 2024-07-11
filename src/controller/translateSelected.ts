@@ -1,5 +1,6 @@
 import type { Range } from 'vscode'
 import { commands, window } from 'vscode'
+import * as meta from '../generated-meta'
 import type { Context } from '~/context'
 import { useExtensionContext } from '~/dependence'
 import { useTranslationMeta } from '~/model/translator'
@@ -10,7 +11,7 @@ export function RegisterTranslateSelectedText(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
 
   // Translate selected text
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.translateSelectedText', async () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.translateSelectedText, async () => {
     const activeEditor = window.activeTextEditor
     if (!activeEditor)
       return

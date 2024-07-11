@@ -34,8 +34,10 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node ./out/test/runTest.js",
-    "publish": "vsce publish --no-dependencies ",
-    "package": "vsce package --no-dependencies "
+    "publish": "vsce publish --no-dependencies",
+    "package": "vsce package --no-dependencies",
+    "update": "npx vscode-ext-gen",
+    "prepare": "pnpm run update"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
@@ -55,6 +57,7 @@
     "typescript": "^5.4.5",
     "varname": "^6.2.0",
     "vsce": "^2.15.0",
+    "vscode-ext-gen": "^0.3.1",
     "vscode-oniguruma": "^1.7.0",
     "vscode-textmate": "^9.0.0"
   },
@@ -62,41 +65,63 @@
     "commands": [
       {
         "command": "interline-translate.translateSelectedText",
+        "category": "Interline Translate",
         "title": "Translate Selected Text"
       },
       {
         "command": "interline-translate.toggleTranslatingDocuments",
+        "category": "Interline Translate",
         "title": "Toggle translating documents"
       },
       {
         "command": "interline-translate.startTranslatingDocuments",
+        "category": "Interline Translate",
         "title": "Start translating documents"
       },
       {
         "command": "interline-translate.stopTranslatingDocuments",
+        "category": "Interline Translate",
         "title": "Stop translating documents"
       },
       {
         "command": "interline-translate.displayOriginalText",
+        "category": "Interline Translate",
         "title": "Display original text"
       },
       {
         "command": "interline-translate.translateTheDocumentOnce",
-        "title": "translate the document once"
+        "category": "Interline Translate",
+        "title": "Translate the document once"
       },
       {
         "command": "interline-translate.showTranslatePopmenu",
-        "title": "Interline Translate"
+        "category": "Interline Translate",
+        "title": "Show menu"
       },
       {
         "command": "interline-translate.clearTranslationCache",
+        "category": "Interline Translate",
         "title": "Clear translation cache"
       },
       {
         "command": "interline-translate.showDebugReport",
+        "category": "Interline Translate",
         "title": "Show debug report"
+      },
+      {
+        "command": "interline-translate.markKnownWords",
+        "category": "Interline Translate",
+        "title": "Mark known words"
       }
     ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "interline-translate.markKnownWords",
+          "when": "false"
+        }
+      ]
+    },
     "configuration": {
       "type": "object",
       "title": "Interline Translate",

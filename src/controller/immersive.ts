@@ -1,6 +1,7 @@
 import { MarkdownString, Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, toRefs } from '@vue/reactivity'
+import * as meta from '../generated-meta'
 import { knownWords, onConfigUpdated } from '~/config'
 import { GapLinesTextDecoration } from '~/view/Interline'
 import type { DecorationMatch } from '~/types'
@@ -13,7 +14,6 @@ import { usePlaceholderCodeLensProvider } from '~/view/codeLens'
 import { showTranslatePopmenu } from '~/view/quickInput'
 import { useStore } from '~/store'
 import { extractPhrases } from '~/model/extract'
-import { EXT_NAMESPACE } from '~/meta'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -46,8 +46,8 @@ export function RegisterTranslator(ctx: Context) {
 
     const text = editor.document.getText()
 
-    const meta = useTranslationMeta()
-    const translationCache = useTranslationCache(ctx, meta.from, meta.to)
+    const { from, to } = useTranslationMeta()
+    const translationCache = useTranslationCache(ctx, from, to)
 
     decorations = []
 
@@ -103,7 +103,7 @@ export function RegisterTranslator(ctx: Context) {
       const markdown = new MarkdownString([
         `$(globe) ${phrase} → ${translatedText}`,
         '',
-        `[Mark as known](command:interline-translate.markKnownPhrase?${encodeURIComponent(JSON.stringify([phrase]))})`,
+        `[Mark as known](command:${meta.commands.markKnownWords}?${encodeURIComponent(JSON.stringify([phrase]))})`,
       ].join('\n'))
       markdown.isTrusted = true
       markdown.supportThemeIcons = true
@@ -152,11 +152,11 @@ export function RegisterTranslator(ctx: Context) {
 
     callingTranslateService.value = true
 
-    const meta = useTranslationMeta()
+    const translate = useTranslationMeta()
     await translateDocument(ctx, {
       textDocument: editor!.document,
-      from: meta.from,
-      to: meta.to,
+      from: translate.from,
+      to: translate.to,
     }).finally(() => callingTranslateService.value = false)
     updateDecorations()
   }
@@ -218,47 +218,47 @@ export function RegisterTranslator(ctx: Context) {
       refreshDecorations()
   })
 
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.startTranslatingDocuments', () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.startTranslatingDocuments, () => {
     displayOriginalText.value = false
     enableContinuousTranslation.value = true
   }))
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.stopTranslatingDocuments', () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.stopTranslatingDocuments, () => {
     enableContinuousTranslation.value = false
     displayOriginalText.value = true
   }))
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.toggleTranslatingDocuments', () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.toggleTranslatingDocuments, () => {
     enableContinuousTranslation.value = !enableContinuousTranslation.value
     displayOriginalText.value = !enableContinuousTranslation.value
   }))
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.translateTheDocumentOnce', () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.translateTheDocumentOnce, () => {
     displayOriginalText.value = false
     enableContinuousTranslationOnce.value = true
   }))
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.displayOriginalText', () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.displayOriginalText, () => {
     enableContinuousTranslationOnce.value = false
     displayOriginalText.value = true
   }))
 
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.showTranslatePopmenu', () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.showTranslatePopmenu, () => {
     showTranslatePopmenu(ctx)
   }))
 
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.clearTranslationCache', () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.clearTranslationCache, () => {
     clearTranslationCache(ctx)
   }))
 
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.markKnownPhrase', async (phrase: string) => {
-    const configs = workspace.getConfiguration(EXT_NAMESPACE)
-    const words = configs.get<string[]>('knownWords', [])
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.markKnownWords, async (phrase: string) => {
+    const configs = workspace.getConfiguration()
+    const words = configs.get(meta.configs.knownWords.key, meta.configs.knownWords.default)
     const parts = phrase.split(' ')
     for (const part of parts) {
       if (!words.includes(part))
         words.push(part)
     }
-    await configs.update('knownWords', words, true)
+    await configs.update(meta.configs.knownWords.key, words, true)
   }))
 
-  extCtx.subscriptions.push(commands.registerCommand('interline-translate.showDebugReport', async () => {
+  extCtx.subscriptions.push(commands.registerCommand(meta.commands.showDebugReport, async () => {
     const data = {
       knownWords: knownWords.value,
     }

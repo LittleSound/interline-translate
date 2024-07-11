@@ -5,3 +5,4 @@ node_modules
 *.vsix
 pkg
 bin
+src/generated-meta.ts
