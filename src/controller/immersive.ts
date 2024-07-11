@@ -2,7 +2,6 @@ import { MarkdownString, Range, commands, window, workspace } from 'vscode'
 import type { TextEditor } from 'vscode'
 import { effect, toRefs } from '@vue/reactivity'
 import { knownWords, onConfigUpdated } from '~/config'
-import { REGEX_FIND_PHRASES } from '~/regex'
 import { GapLinesTextDecoration } from '~/view/Interline'
 import type { DecorationMatch } from '~/types'
 import { clearTranslationCache, useTranslationCache } from '~/model/cache'
@@ -36,8 +35,6 @@ export function RegisterTranslator(ctx: Context) {
 
   const placeholderCodeLens = usePlaceholderCodeLensProvider()
 
-  const regex = REGEX_FIND_PHRASES
-
   async function updateDecorations() {
     if (!editor)
       return
@@ -56,7 +53,7 @@ export function RegisterTranslator(ctx: Context) {
 
     const tokens = await parseDocumentToTokens({ textDocument: editor.document })
 
-    for (const { phrase, match, translated } of extractPhrases(text)) {
+    for (const { phrase, match, translated, regex } of extractPhrases(text)) {
       const translatedText = translated
         ? phrase
         : translationCache.get(phrase)
