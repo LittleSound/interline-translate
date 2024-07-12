@@ -19,7 +19,7 @@ export function showSetLanguagePopmenu(ctx: Context, type: 'target' | 'source') 
   const translatorName = config.translator || 'google'
   quickPick.items = languageOptions
     .filter(item => type === 'target'
-      ? translators[translatorName].supportLanguage[item.description!]
+      ? translators.value[translatorName].supportLanguage[item.description!]
       : item.description === 'en',
     )
     .map((item) => {

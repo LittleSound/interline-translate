@@ -45,7 +45,7 @@ export function showTranslatePopmenu(ctx: Context) {
     },
     {
       label: '$(cloud) Service:',
-      description: translators[config.translator]?.label || `Unsupported: ${config.translator}`,
+      description: translators.value[config.translator]?.label || `Unsupported: ${config.translator}`,
       callback: () => showSetTranslationService(ctx),
     },
     {

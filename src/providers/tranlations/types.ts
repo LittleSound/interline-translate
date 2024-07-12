@@ -21,6 +21,7 @@ export interface TranslationProviderInfo {
   name: string
   label: string
   supportLanguage: Record<string, string | undefined>
+  maxLen?: number
   needs: { config_key: string; place_hold: string }[]
   translate: (options: TranslationParameters) => Promise<TranslationResult>
 }

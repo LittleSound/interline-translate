@@ -5,6 +5,7 @@ import { useExtensionContext } from './dependence'
 import { RegisterControllers } from './controller'
 import { registerEntryButton } from './view/statusBar'
 import { registerStore } from './store'
+import { registerExtensionTranslate } from './providers/tranlations/extensions'
 import { createContext } from '~/context'
 import { RegisterGrammar } from '~/model/grammar'
 import { registerConfig } from '~/config'
@@ -24,6 +25,7 @@ export async function activate(extCtx: vscode.ExtensionContext) {
 
   registerConfig(ctx)
   await RegisterGrammar(ctx)
+  registerExtensionTranslate(ctx)
   RegisterControllers(ctx)
   registerEntryButton(ctx)
 }
