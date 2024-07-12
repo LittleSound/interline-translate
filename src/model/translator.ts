@@ -99,7 +99,7 @@ export async function translateDocument(ctx: Context, options: TranslateDocument
   if (!phrasesFromDoc.length)
     return
 
-  const translator = translators[config.translator]
+  const translator = translators.value[config.translator]
   const translationResult = await translator.translate({
     text: phrasesFromDoc.join('\n'),
     from: from as keyof typeof translator.supportLanguage,

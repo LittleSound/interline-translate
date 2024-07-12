@@ -1,4 +1,4 @@
-import { QuickInputButtons, window } from 'vscode'
+import { QuickInputButtons, commands, window } from 'vscode'
 import { defineQuickPickItems } from './utils'
 import { showTranslatePopmenu } from './translatePopmenu'
 import { config } from '~/config'
@@ -11,20 +11,35 @@ export function showSetTranslationService(ctx: Context) {
   quickPick.title = 'Translation Service'
   quickPick.matchOnDescription = true
   quickPick.matchOnDetail = true
-  defineQuickPickItems(quickPick, translatorOptions.map(({ name, label }) => ({
+  let notGoingHome = false
+  const moreItem = {
+    label: '$(extensions) More...',
+    description: 'Install more translate sources from Extensions Marketplace',
+  }
+  defineQuickPickItems(quickPick, translatorOptions.value.map(({ name, label }) => ({
     label: name === config.translator ? `$(check) ${label}` : `$(array) ${label}`,
     description: name,
-  })))
+  })).concat([moreItem]))
 
-  quickPick.onDidChangeSelection((selection) => {
-    window.showInformationMessage(`Selected service: ${selection[0].label}`)
+  quickPick.onDidChangeSelection(async (selection) => {
     const translatorName = selection[0].description
-    if (!translatorName || !(translatorName in translators)) {
-      window.showErrorMessage('Invalid service')
+
+    // Search Plugin Marketplace
+    if (translatorName === moreItem.description) {
+      commands.executeCommand('workbench.extensions.search', '@tag:translateSource')
+      notGoingHome = true
+      quickPick.hide()
       return
     }
+
+    if (!translatorName || !(translatorName in translators.value)) {
+      window.showErrorMessage(`Invalid service: ${translatorName}`)
+      return
+    }
+
+    window.showInformationMessage(`Selected service: ${selection[0].label.split(') ')[1]}`)
     config.translator = translatorName as ConfigKeyTypeMap['interline-translate.translator']
-    showTranslatePopmenu(ctx)
+    quickPick.hide()
   })
 
   quickPick.buttons = [
@@ -32,12 +47,13 @@ export function showSetTranslationService(ctx: Context) {
   ]
   quickPick.onDidTriggerButton((button) => {
     if (button === QuickInputButtons.Back)
-      showTranslatePopmenu(ctx)
+      quickPick.hide()
   })
 
   quickPick.onDidHide(() => {
     quickPick.dispose()
-    showTranslatePopmenu(ctx)
+    if (!notGoingHome)
+      showTranslatePopmenu(ctx)
   })
   quickPick.show()
 }

@@ -26,7 +26,7 @@ export function RegisterTranslateSelectedText(ctx: Context) {
 
     const meta = useTranslationMeta()
 
-    const translator = translators[config.translator]
+    const translator = translators.value[config.translator]
     const res = await translate({
       text: activeEditor.document.getText(range),
       from: meta.from as keyof typeof translator.supportLanguage,

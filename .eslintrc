@@ -12,7 +12,8 @@
     "src/generated-meta.ts"
   ],
   "rules": {
-    "no-console": ["warn", { "allow": ["warn", "error"] }]
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-void": "off"
 
     // "@typescript-eslint/naming-convention": "warn",
     // "@typescript-eslint/semi": "warn",
