@@ -4,7 +4,8 @@ import { config, languageOptions } from '~/config'
 import type { Context } from '~/context'
 import { useStore } from '~/store'
 import type { Fn } from '~/types'
-import { supportLanguage } from '~/providers/tranlations'
+import { translatorOptions, translators } from '~/providers/tranlations'
+import type { ConfigKeyTypeMap } from '~/generated-meta'
 
 export function showTranslatePopmenu(ctx: Context) {
   const store = useStore(ctx)
@@ -43,7 +44,7 @@ export function showTranslatePopmenu(ctx: Context) {
     },
     {
       label: '$(cloud) Service:',
-      description: 'Google Translate',
+      description: translators[config.translator]?.label || `Unsupported: ${config.translator}`,
       callback: () => showSetTranslationService(ctx),
     },
   ])
@@ -63,9 +64,10 @@ export function showSetLanguagePopmenu(ctx: Context, type: 'target' | 'source') 
     ? config.defaultTargetLanguage
     : 'en'
 
+  const translatorName = config.translator || 'google'
   quickPick.items = languageOptions
     .filter(item => type === 'target'
-      ? supportLanguage.google[item.description!]
+      ? translators[translatorName].supportLanguage[item.description!]
       : item.description === 'en',
     )
     .map((item) => {
@@ -112,29 +114,19 @@ export function showSetTranslationService(ctx: Context) {
   quickPick.title = 'Translation Service'
   quickPick.matchOnDescription = true
   quickPick.matchOnDetail = true
-  defineQuickPickItems(quickPick, [
-    {
-      key: 'google',
-      label: 'Google Translate',
-      description: 'Powered by Google Translate',
-    },
-    // TODO add more translation services
-    // {
-    //   label: 'Baidu Translate',
-    //   description: 'Powered by Baidu Translate',
-    // },
-    // {
-    //   label: 'Youdao Translate',
-    //   description: 'Powered by Youdao Translate',
-    // },
-    // {
-    //   label: 'More...',
-    //   description: 'Install more translate sources from Extensions Marketplace',
-    // },
-  ])
+  defineQuickPickItems(quickPick, translatorOptions.map(({ name, label }) => ({
+    label: name === config.translator ? `$(check) ${label}` : `$(array) ${label}`,
+    description: name,
+  })))
 
   quickPick.onDidChangeSelection((selection) => {
     window.showInformationMessage(`Selected service: ${selection[0].label}`)
+    const translatorName = selection[0].description
+    if (!translatorName || !(translatorName in translators)) {
+      window.showErrorMessage('Invalid service')
+      return
+    }
+    config.translator = translatorName as ConfigKeyTypeMap['interline-translate.translator']
     showTranslatePopmenu(ctx)
   })
 

@@ -6,6 +6,8 @@ import { useExtensionContext } from '~/dependence'
 import { useTranslationMeta } from '~/model/translator'
 import { translate } from '~/providers/tranlations/google'
 import { displayOnGapLines } from '~/view'
+import { config } from '~/config'
+import { translators } from '~/providers/tranlations'
 
 export function RegisterTranslateSelectedText(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -24,10 +26,11 @@ export function RegisterTranslateSelectedText(ctx: Context) {
 
     const meta = useTranslationMeta()
 
+    const translator = translators[config.translator]
     const res = await translate({
       text: activeEditor.document.getText(range),
-      from: meta.from as string as any,
-      to: meta.to as string as any,
+      from: meta.from as keyof typeof translator.supportLanguage,
+      to: meta.to as keyof typeof translator.supportLanguage,
     })
 
     if (!res.ok) {
