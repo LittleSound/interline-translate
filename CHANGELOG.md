@@ -1,5 +1,11 @@
 # Change Log
 
+### 0.5.0
+
+* feat(providers): bing translation by @LittleSound in https://github.com/LittleSound/interline-translate/pull/16
+* feat: setting popmenu by @LittleSound in https://github.com/LittleSound/interline-translate/pull/17
+* feat(providers): translation providers from extensions by @LittleSound in https://github.com/LittleSound/interline-translate/pull/18
+
 ### 0.4.0
 
 * fix: onig.wasm path by @hyoban in https://github.com/LittleSound/interline-translate/pull/12
