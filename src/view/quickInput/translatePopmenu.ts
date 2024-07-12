@@ -2,6 +2,7 @@ import { QuickPickItemKind, commands, window } from 'vscode'
 import { defineQuickPickItems } from './utils'
 import { showSetLanguagePopmenu } from './setLanguagePopmenu'
 import { showSetTranslationService } from './setTranslationService'
+import { showSettingsPopmenu } from './settingsPopmenu'
 import { config, languageOptions } from '~/config'
 import type { Context } from '~/context'
 import { useStore } from '~/store'
@@ -46,6 +47,11 @@ export function showTranslatePopmenu(ctx: Context) {
       label: '$(cloud) Service:',
       description: translators[config.translator]?.label || `Unsupported: ${config.translator}`,
       callback: () => showSetTranslationService(ctx),
+    },
+    {
+      label: '$(gear) Settings',
+      description: 'Configure extension settings',
+      callback: () => showSettingsPopmenu(ctx),
     },
   ])
   quickPick.onDidHide(() => quickPick.dispose())
