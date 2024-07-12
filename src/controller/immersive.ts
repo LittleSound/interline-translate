@@ -11,9 +11,9 @@ import { translateDocument, useTranslationMeta } from '~/model/translator'
 import { useExtensionContext } from '~/dependence'
 import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 import { usePlaceholderCodeLensProvider } from '~/view/codeLens'
-import { showTranslatePopmenu } from '~/view/quickInput'
 import { useStore } from '~/store'
 import { extractPhrases } from '~/model/extract'
+import { showTranslatePopmenu } from '~/view/quickInput/translatePopmenu'
 
 export function RegisterTranslator(ctx: Context) {
   const extCtx = useExtensionContext(ctx)
@@ -245,6 +245,11 @@ export function RegisterTranslator(ctx: Context) {
 
   extCtx.subscriptions.push(commands.registerCommand(meta.commands.clearTranslationCache, () => {
     clearTranslationCache(ctx)
+
+    if (enableContinuousTranslation.value) {
+      commands.executeCommand(meta.commands.stopTranslatingDocuments)
+      commands.executeCommand(meta.commands.startTranslatingDocuments)
+    }
   }))
 
   extCtx.subscriptions.push(commands.registerCommand(meta.commands.markKnownWords, async (phrase: string) => {
