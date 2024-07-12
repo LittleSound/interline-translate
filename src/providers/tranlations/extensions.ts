@@ -3,7 +3,9 @@ import { extensions } from 'vscode'
 import type { TranslationParameters, TranslationProviderInfo, TranslationResult } from './types'
 import type { Context } from '~/context'
 import { invoke } from '~/utils'
-import { config } from '~/config'
+import { config, languageOptions } from '~/config'
+
+const allSupportLanguage = Object.fromEntries(languageOptions.map(item => [item.description!, item.description!]))
 
 export interface ITranslateExtensionConfig {
   extensionId: string
@@ -12,7 +14,7 @@ export interface ITranslateExtensionConfig {
   Ctor?: new () => any
   translate: string
   instance?: any
-
+  supportLanguage: Record<string, string | undefined>
   promise?: Promise<any>
 }
 
@@ -28,9 +30,7 @@ export const externalTranslators = computed(() => {
       name,
       label: item.title,
       needs: [],
-      supportLanguage: {
-        'zh-CN': 'zh-CN',
-      },
+      supportLanguage: item.supportLanguage,
       translate: options => translateWithConf(name, item, options),
     }]))
 })
@@ -60,6 +60,7 @@ export function loadExtensionTranslate() {
             translate,
             title,
             category,
+            supportLanguage: allSupportLanguage,
           }))
         }
       }
@@ -122,6 +123,13 @@ async function activateWithConf(name: string, conf: ITranslateExtensionConfig) {
         .extendTranslate((_: any, Translate: new () => any) => {
           conf.Ctor = Translate
           conf.instance = new conf.Ctor()
+
+          if (typeof conf.instance?.isSupported === 'function') {
+            const supportLanguage = Object.fromEntries(languageOptions
+              .filter(item => conf.instance.isSupported(item.description!))
+              .map(item => [item.description!, item.description!]))
+            conf.supportLanguage = supportLanguage
+          }
         })
     })
     await conf.promise
