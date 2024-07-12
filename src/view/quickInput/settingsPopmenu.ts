@@ -35,11 +35,10 @@ export function showSettingsPopmenu(ctx: Context) {
   quickPick.buttons = [QuickInputButtons.Back]
   quickPick.onDidTriggerButton((button) => {
     if (button === QuickInputButtons.Back)
-      showTranslatePopmenu(ctx)
+      quickPick.hide()
   })
 
   quickPick.onDidHide(() => {
-    quickPick.dispose()
     if (!routeJumping)
       showTranslatePopmenu(ctx)
   })

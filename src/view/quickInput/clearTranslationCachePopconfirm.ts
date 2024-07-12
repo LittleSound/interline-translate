@@ -10,6 +10,8 @@ export function showClearTranslationCachePopconfirm(ctx: Context) {
   quickPick.title = 'Are you sure to clear translation cache?'
   quickPick.matchOnDescription = true
   quickPick.matchOnDetail = true
+  let routeJumping = false
+  quickPick.onDidChangeSelection(() => routeJumping = true)
   defineQuickPickItems(quickPick, [
     {
       label: '$(x) No',
@@ -28,12 +30,12 @@ export function showClearTranslationCachePopconfirm(ctx: Context) {
   ]
   quickPick.onDidTriggerButton((button) => {
     if (button === QuickInputButtons.Back)
-      showSettingsPopmenu(ctx)
+      quickPick.hide()
   })
 
   quickPick.onDidHide(() => {
-    quickPick.dispose()
-    showSettingsPopmenu(ctx)
+    if (!routeJumping)
+      showSettingsPopmenu(ctx)
   })
   quickPick.show()
 }

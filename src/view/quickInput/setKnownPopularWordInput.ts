@@ -8,6 +8,7 @@ export function showSetKnownPopularWordInput(ctx: Context) {
   const inputBox = window.createInputBox()
   inputBox.title = 'Known Popular Words'
   inputBox.value = String(config.knownPopularWordCount || 0)
+  let routeJumping = false
 
   inputBox.onDidAccept(() => {
     const count = Number(inputBox.value)
@@ -16,6 +17,7 @@ export function showSetKnownPopularWordInput(ctx: Context) {
       return
     }
     config.knownPopularWordCount = count
+    routeJumping = true
     showTranslatePopmenu(ctx)
   })
 
@@ -24,12 +26,12 @@ export function showSetKnownPopularWordInput(ctx: Context) {
   ]
   inputBox.onDidTriggerButton((button) => {
     if (button === QuickInputButtons.Back)
-      showTranslatePopmenu(ctx)
+      inputBox.hide()
   })
 
   inputBox.onDidHide(() => {
-    inputBox.dispose()
-    showSettingsPopmenu(ctx)
+    if (!routeJumping)
+      showSettingsPopmenu(ctx)
   })
   inputBox.show()
 }
