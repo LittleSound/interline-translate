@@ -136,6 +136,12 @@
           "default": "",
           "description": "Fallback language when the default language is not available."
         },
+        "interline-translate.translator": {
+          "type": "string",
+          "default": "bing",
+          "enum": ["google", "bing"],
+          "description": "Translation service provider"
+        },
         "interline-translate.googleTranslateProxy": {
           "type": "string",
           "default": "",

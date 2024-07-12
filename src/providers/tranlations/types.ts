@@ -19,6 +19,8 @@ export interface TranslationParameters {
 
 export interface TranslationProviderInfo {
   name: string
+  label: string
   supportLanguage: Record<string, string | undefined>
   needs: { config_key: string; place_hold: string }[]
+  translate: (options: TranslationParameters) => Promise<TranslationResult>
 }

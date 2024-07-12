@@ -3,9 +3,9 @@ import type { TextDocument } from 'vscode'
 import { extractPhrases } from './extract'
 import { CommentScopes, StringScopes, findScopesRange, isComment, isKeyword, isString, parseDocumentToTokens } from '~/model/grammar'
 import { persistTranslationCache, useTranslationCache } from '~/model/cache'
-import { translate } from '~/providers/tranlations/google'
 import { config } from '~/config'
 import type { Context } from '~/context'
+import { translators } from '~/providers/tranlations'
 
 export function useTranslationMeta() {
   // TODO: use config or automatically recognize from language
@@ -99,10 +99,11 @@ export async function translateDocument(ctx: Context, options: TranslateDocument
   if (!phrasesFromDoc.length)
     return
 
-  const translationResult = await translate({
+  const translator = translators[config.translator]
+  const translationResult = await translator.translate({
     text: phrasesFromDoc.join('\n'),
-    from: from as string as any,
-    to: to as string as any,
+    from: from as keyof typeof translator.supportLanguage,
+    to: to as keyof typeof translator.supportLanguage,
   })
 
   if (!translationResult.ok) {

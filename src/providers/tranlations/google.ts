@@ -5,6 +5,7 @@ import { config } from '~/config'
 
 export const info: TranslationProviderInfo = {
   name: 'google',
+  label: 'Google Translate',
   // https://cloud.google.com/translate/docs/languages?hl=zh-cn
   supportLanguage: {
     'auto': 'auto',
@@ -34,6 +35,7 @@ export const info: TranslationProviderInfo = {
       place_hold: 'default: translate.google.com',
     },
   ],
+  translate,
 }
 
 export type SupportLanguage = keyof typeof info.supportLanguage
@@ -69,9 +71,9 @@ export async function translate(options: GoogleTranslationParameters): Promise<T
         `${config.corsProxy}https://${domain}/translate_a/single?dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t`,
         {
           method: 'GET',
-          headers: {
-            Origin: 'https://translate.google.com',
-          },
+          // headers: {
+          //   Origin: 'https://translate.google.com',
+          // },
           query: {
             client: 'gtx',
             sl: supportLanguage[from],
