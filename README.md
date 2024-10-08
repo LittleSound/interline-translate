@@ -53,19 +53,21 @@ If you like this project, you can support me in the following ways:
 - [⭐️ Give this project a Star](https://github.com/LittleSound/interline-translate)
 - Share with your friends
 
-## Sponsors
 
-This project is made possible by all the sponsors supporting my work:
+<h2 align="center">Sponsors</h2>
 
 <p align="center">
   <a href="https://github.com/sponsors/LittleSound">
-    <img src="https://raw.githubusercontent.com/LittleSound/sponsors/main/sponsors.svg"/>
+    <img src="https://cdn.jsdelivr.net/gh/littlesound/sponsors/sponsors.svg"/>
   </a>
 </p>
 
-You can join them at my sponsors profile:
+<p align="center">
+  This project is made possible by all the sponsors supporting my work <br>
+  You can join them at my sponsors profile:
+</p>
+<p align="center"><a href="https://github.com/sponsors/LittleSound"><img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86&style=for-the-badge" /></a></p>
 
-[![Sponsors](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/LittleSound)
 
 ## Other Translation Plugin
 

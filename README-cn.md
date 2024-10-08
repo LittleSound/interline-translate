@@ -53,6 +53,22 @@ Interline Translate 是一个 VSCode 扩展，它的功能是在 VSCode 中提�
 - [⭐️ 给这个项目点个 Star](https://github.com/LittleSound/interline-translate)
 - 分享给你的朋友
 
+
+<h2 align="center">Sponsors</h2>
+
+<p align="center">
+  <a href="https://github.com/sponsors/LittleSound">
+    <img src="https://cdn.jsdelivr.net/gh/littlesound/sponsors/sponsors.svg"/>
+  </a>
+</p>
+
+<p align="center">
+  这个项目得以实现，要感谢所有支持我的工作的 Sponsors<br>
+  您可以在我的赞助商资料中加入他们：
+</p>
+<p align="center"><a href="https://github.com/sponsors/LittleSound"><img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86&style=for-the-badge" /></a></p>
+
+
 ## 其它翻译插件推荐
 
 - 翻译注释或者字符串：[Comment Translate](https://marketplace.visualstudio.com/items?itemName=intellsmi.comment-translate)
