@@ -58,7 +58,7 @@ Interline Translate 是一个 VSCode 扩展，它的功能是在 VSCode 中提�
 
 <p align="center">
   <a href="https://github.com/sponsors/LittleSound">
-    <img src="https://cdn.jsdelivr.net/gh/littlesound/sponsors/sponsors.svg"/>
+    <img src="https://cdn.jsdelivr.net/gh/littlesound/sponsors/sponsors.png"/>
   </a>
 </p>
 

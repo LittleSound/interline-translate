@@ -58,7 +58,7 @@ If you like this project, you can support me in the following ways:
 
 <p align="center">
   <a href="https://github.com/sponsors/LittleSound">
-    <img src="https://cdn.jsdelivr.net/gh/littlesound/sponsors/sponsors.svg"/>
+    <img src="https://cdn.jsdelivr.net/gh/littlesound/sponsors/sponsors.png"/>
   </a>
 </p>
 
